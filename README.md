@@ -1,0 +1,2 @@
+## Por: Alejandro Ore
+Buenas tardes profesor. He cambiado el formato para que utilice Makefile en lugar de solo ser ejecutado y ya. Este cambio fue realizado principalmente porque de esta forma se me hacía más comodo trabajar. Espero no genere muchos conflictos con respecto al tema del autograder. Para correr el programa, en la carpeta root (donde se encuentra el Makefile) correr `make run`. Todos los archivos del código fuente se encuentran en la carpeta `src`.
