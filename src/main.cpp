@@ -1,10 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include "scanner.h"
-#include "parser.h"
-#include "visitor.h"
 
+#include "Scanner/Scanner.h"
 using namespace std;
 
 int main(int argc, const char* argv[]) {
@@ -27,34 +25,7 @@ int main(int argc, const char* argv[]) {
     infile.close();
 
     Scanner scanner(input.c_str());
-
-    string input_copy = input;
-    Scanner scanner_test(input_copy.c_str());
-    test_scanner(&scanner_test);
-    cout << "Scanner exitoso" << endl;
-    cout << endl;
-    cout << "Iniciando parsing:" << endl;
-    Parser parser(&scanner); 
-    try {
-        Program* program = parser.parseProgram();
-        cout << "Parsing exitoso" << endl << endl;
-        cout << "Iniciando Visitor:" << endl;
-        PrintVisitor printVisitor;
-        EVALVisitor evalVisitor;
-        TypeVisitor typeVisitor;
-        cout << "VERIFICANDO:" << endl;
-        //typeVisitor.check(program);
-        cout << endl;
-        cout << "IMPRIMIR:" << endl;
-        printVisitor.imprimir(program);
-        cout  << endl;
-        cout << "EJECUTAR:" << endl;
-        //evalVisitor.ejecutar(program);
-        delete program;
-    } catch (const exception& e) {
-        cout << "Error durante la ejecución: " << e.what() << endl;
-        return 1;
-    }
+    scanner.test();
 
     return 0;
 }

@@ -6,10 +6,11 @@
 CC = g++
 CXXFLAGS = -std=c++20 -Wall -g -I./src
 
-INPUTFILE = input4.txt
+INPUTFOLDER = input
+INPUTFILE = input1.rs
 
 # Makefile settings - Can be customized.
-APPNAME = lab14
+APPNAME = RustC
 EXT = .cpp
 SRCDIR = src
 OBJDIR = obj
@@ -18,7 +19,7 @@ DEPDIR = dep
 ############## Do not change anything from here downwards! #############
 SRC = $(shell find $(SRCDIR) -name '*$(EXT)') # Find all .cpp files recursively
 OBJ = $(SRC:$(SRCDIR)/%$(EXT)=$(OBJDIR)/%.o)  # Replace .cpp with .o
-DEP = $(SRC:$(SRCDIR)/%$(EXT)=$(DEPDIR)/%.d)  # Replace .cpp with .d
+DEP = $(SRC:$(SRCDIR)/%$(EXT)=$(DEPDIR)/ %.d)  # Replace .cpp with .d
 
 # UNIX-based OS variables & settings
 RM = rm -f        # Use -f to avoid errors when file does not exist
@@ -63,7 +64,7 @@ $(DEPDIR)/%.d: $(SRCDIR)/%$(EXT)
 # Rule to compile and run the app
 .PHONY: run
 run: $(APPNAME)
-	./$(APPNAME) $(INPUTFILE)
+	./$(APPNAME) $(INPUTFOLDER)/$(INPUTFILE)
 
 ################### Cleaning rules for Unix-based OS ###################
 # Cleans complete project

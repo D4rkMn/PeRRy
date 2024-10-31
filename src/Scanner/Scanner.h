@@ -2,19 +2,26 @@
 #define SCANNER_H
 
 #include <string>
-#include "token.h"
+#include "Token/Token.h"
 
 class Scanner {
 private:
+
     std::string input;
-    int first, current;
+    size_t first, current;
+
+    bool isWhiteSpace(char c) const;
+
 public:
+
     Scanner(const char* in_s);
+    ~Scanner();
+
+    void test() const;
+  
     Token* nextToken();
     void reset();
-    ~Scanner();
-};
 
-void test_scanner(Scanner* scanner);
+};
 
 #endif // SCANNER_H
