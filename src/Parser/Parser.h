@@ -12,8 +12,8 @@ private:
     bool advance();
     bool isAtEnd();
 
-    bool match(Token::Type ttype);
-    bool check(Token::Type ttype);
+    bool match(Token::Type);
+    bool check(Token::Type);
 
 public:
 

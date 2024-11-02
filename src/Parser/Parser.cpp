@@ -24,7 +24,7 @@ bool Parser::match(Token::Type ttype) {
 
 bool Parser::check(Token::Type ttype) {
     if (isAtEnd()) return false;
-    return current->type == ttype;
+    return (current->type == ttype);
 }
 
 bool Parser::advance() {
