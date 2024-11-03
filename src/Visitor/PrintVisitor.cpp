@@ -32,7 +32,7 @@ void PrintVisitor::visit(VarDec* vardec) {
     if (vardec->mut) cout << "mut ";
     cout << vardec->id << " ";
     if (vardec->type != UNKNOWN_TYPE) {
-        cout << ": " << vardec->type << " ";
+        cout << ": " << varTypeToString(vardec->type) << " ";
     }
     if (vardec->exp) {
         cout << "= " << vardec->exp->accept(this);
@@ -48,7 +48,7 @@ void PrintVisitor::visit(Function* function) {
     }
     cout << ")";
     if (function->type != VOID_TYPE) {
-        cout << "-> " << function->type << " ";
+        cout << " -> " << varTypeToString(function->type) << " ";
     }
     cout << "{\n";
     function->body->accept(this);
@@ -63,7 +63,7 @@ void PrintVisitor::visit(ParamDecList* params) {
 }
 
 void PrintVisitor::visit(ParamDec* param) {
-    cout << param->id << " : " << param->type;
+    cout << param->id << " : " << varTypeToString(param->type);
 }
 
 // Stm
@@ -139,7 +139,7 @@ void PrintVisitor::visit(IdentifierExp* exp) {
 void PrintVisitor::visit(FunctionExp* exp) {
     cout << exp->name << "(";
     for (auto it = exp->args.begin(); it != exp->args.end(); it++) {
-        cout << ", ";
+        if (it != exp->args.begin()) cout << ", ";
         (*it)->accept(this);
     }
     cout << ")";

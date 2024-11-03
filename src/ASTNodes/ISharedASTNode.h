@@ -1,6 +1,8 @@
 #ifndef ISHAREDASTNODE_H
 #define ISHAREDASTNODE_H
 
+#include <string>
+
 class IVisitor;
 
 enum VarType {
@@ -9,6 +11,8 @@ enum VarType {
     VOID_TYPE,
     UNKNOWN_TYPE
 };
+
+std::string varTypeToString(VarType);
 
 enum ASTNodeType {
     FUNCTION_NODE,
