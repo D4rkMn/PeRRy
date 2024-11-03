@@ -4,6 +4,7 @@
 
 #include "Scanner/Scanner.h"
 #include "Parser/Parser.h"
+#include "Visitor/PrintVisitor.h"
 using namespace std;
 
 int main(int argc, const char* argv[]) {
@@ -29,6 +30,9 @@ int main(int argc, const char* argv[]) {
     scanner.test();
 
     Parser parser(&scanner);
-    parser.parseProgram();
+    Program* program = parser.parseProgram();
+
+    PrintVisitor printer;
+    printer.print(program);
     return 0;
 }

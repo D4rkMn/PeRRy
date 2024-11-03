@@ -15,7 +15,7 @@ public:
     Exp* exp;
     VarDec(bool, const std::string&, VarType, Exp*);
     ~VarDec();
-    int accept(Visitor*) override;
+    int accept(IVisitor*) override;
     ASTNodeType getType() const override { return VARDEC_NODE; }
 };
 
@@ -25,7 +25,7 @@ public:
     Body() = default;
     ~Body();
     void add(ISharedASTNode*);
-    int accept(Visitor*);
+    int accept(IVisitor*);
 };
 
 class Program {
@@ -34,7 +34,7 @@ public:
     Program() = default;
     ~Program();
     void add(ISharedASTNode*);
-    int accept(Visitor*);
+    int accept(IVisitor*);
 };
 
 #endif

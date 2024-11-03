@@ -25,7 +25,7 @@ Program* Parser::parseProgram() {
             throw SyntaxError("Se esperaba una función o una declaración de variable");
         }
     }
-    cout << "Parsing exitoso\n";
+    cout << "Parsing exitoso\n\n";
     return program;
 }
 
