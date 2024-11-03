@@ -11,11 +11,12 @@ class Visitor;
 
 class Stm : public ISharedASTNode {
 public:
-    virtual ~Stm() = 0;
+    virtual ~Stm() {}
     ASTNodeType getType() const override { return STM_NODE; }
 };
 
 class ExpStatement : public Stm {
+public:
     Exp* exp;
     ExpStatement(Exp*);
     ~ExpStatement();
@@ -69,10 +70,11 @@ public:
 
 class ForStatement : public Stm {
 public:
+    std::string id;
     Exp* start;
     Exp* end;
     Body* body;
-    ForStatement(Exp*, Exp*, Body*);
+    ForStatement(const std::string&, Exp*, Exp*, Body*);
     ~ForStatement();
     int accept(Visitor* visitor) override;
 };

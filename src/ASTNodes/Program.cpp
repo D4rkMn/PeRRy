@@ -1,5 +1,6 @@
 #include <iostream>
 #include "ASTNodes/Program.h"
+#include "ASTNodes/Exp.h"
 using namespace std;
 
 // VarDec

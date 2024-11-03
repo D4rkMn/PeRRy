@@ -1,5 +1,17 @@
 #ifndef VISITOR_H
 #define VISITOR_H
+
+class Visitor {
+public:
+    template<typename T>
+    void visit(T xd) {}
+};
+
+#endif
+
+/*
+#ifndef VISITOR_H
+#define VISITOR_H
 #include "exp.h"
 #include "environment.h"
 #include <list>
@@ -134,3 +146,5 @@ public:
 };
 
 #endif // VISITOR_H
+
+*/

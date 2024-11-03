@@ -26,10 +26,11 @@ public:
 
     Type type;
     std::string text;
+    size_t line;
 
-    Token(Type type);
-    Token(Type type, char c);
-    Token(Type type, const std::string& source, int first, int last);
+    Token(Type, size_t);
+    Token(Type, char, size_t);
+    Token(Type, const std::string&, int, int, size_t);
 
     static Token::Type wordToToken(const std::string&);
 

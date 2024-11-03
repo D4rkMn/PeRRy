@@ -1,7 +1,30 @@
 #ifndef PARSER_H
 #define PARSER_H
 
+#include <iostream>
 #include "Scanner/Scanner.h"
+#include "ASTNodes/ISharedASTNode.h"
+#include "ASTNodes/Exp.h"
+
+class Program;
+
+class Function;
+class ParamDecList;
+class VarDec;
+
+class Body;
+class Stm;
+class Exp;
+
+class _SyntaxError {
+private:
+    std::string msg;
+public:
+    _SyntaxError(const std::string& msg) : msg(msg) {}
+    void operator()() const {
+        std::cout << msg << "\n";
+    }
+};
 
 class Parser {
 private:
@@ -11,15 +34,31 @@ private:
 
     bool advance();
     bool isAtEnd();
-
     bool match(Token::Type);
     bool check(Token::Type);
+
+    _SyntaxError SyntaxError(const std::string&) const;
+    VarType TokenTypeToVarType(Token::Type) const;
+    BinaryOp TokenTypeToBinaryOp(Token::Type) const;
+
+    Function* parseFunction();
+    ParamDecList* parseParamDecList();
+    VarDec* parseVarDec();
+
+    Body* parseBody();
+    Stm* parseStatement();
+
+    Exp* parseCExpression();
+    Exp* parseExpression();
+    Exp* parseTerm();
+    Exp* parseFactor();
 
 public:
 
     Parser(Scanner*);
     ~Parser() = default;
+    Program* parseProgram();
 
 };
 
-#endif // PARSER_H
+#endif

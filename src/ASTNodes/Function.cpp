@@ -1,4 +1,5 @@
 #include "ASTNodes/Function.h"
+#include "ASTNodes/Program.h"
 using namespace std;
 
 // ParamDec

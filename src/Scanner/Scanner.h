@@ -8,9 +8,11 @@ class Scanner {
 private:
 
     std::string input;
-    size_t first, current;
+    size_t first, current, line;
+    bool isTestScanner = false;
 
     bool isWhiteSpace(char c) const;
+    bool isNewline(char c) const;
 
 public:
 

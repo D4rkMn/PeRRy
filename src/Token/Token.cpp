@@ -3,11 +3,11 @@
 
 using namespace std;
 
-Token::Token(Type type):type(type) { text = ""; }
+Token::Token(Type type, size_t line) : type(type), line(line) { text = ""; }
 
-Token::Token(Type type, char c):type(type) { text = string(1, c); }
+Token::Token(Type type, char c, size_t line) : type(type), line(line) { text = string(1, c); }
 
-Token::Token(Type type, const string& source, int first, int last) : type(type) {
+Token::Token(Type type, const string& source, int first, int last, size_t line) : type(type), line(line) {
     text = source.substr(first, last);
 }
 

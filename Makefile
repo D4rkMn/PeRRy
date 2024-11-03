@@ -7,7 +7,7 @@ CC = g++
 CXXFLAGS = -std=c++20 -Wall -g -I./src
 
 INPUTFOLDER = input
-INPUTFILE = input1.rs
+INPUTFILE = input5.rs
 
 # Makefile settings - Can be customized.
 APPNAME = RustC

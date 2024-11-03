@@ -19,7 +19,7 @@ enum ASTNodeType {
 class ISharedASTNode {
 public:
     virtual int accept(Visitor*) = 0;
-    virtual ~ISharedASTNode() = 0;
+    virtual ~ISharedASTNode() {}
     virtual ASTNodeType getType() const = 0;
 };
 

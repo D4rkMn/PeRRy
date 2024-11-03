@@ -9,8 +9,8 @@ class Body;
 
 class ParamDec {
 public:
-    std::string id;
     VarType type;
+    std::string id;
     ParamDec(VarType, const std::string&);
     ~ParamDec() = default;
     int accept(Visitor* visitor);

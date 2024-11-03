@@ -1,4 +1,6 @@
 #include "ASTNodes/Stm.h"
+#include "ASTNodes/Exp.h"
+#include "ASTNodes/Program.h"
 using namespace std;
 
 // ExpStatement
@@ -46,8 +48,8 @@ IfStatement::~IfStatement() {
 
 // ForStatement
 
-ForStatement::ForStatement(Exp* start, Exp* end, Body* body)
-    : start(start), end(end), body(body) {}
+ForStatement::ForStatement(const string& id, Exp* start, Exp* end, Body* body)
+    : id(id), start(start), end(end), body(body) {}
 
 ForStatement::~ForStatement() {
     delete start;

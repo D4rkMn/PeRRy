@@ -3,6 +3,7 @@
 #include <string>
 
 #include "Scanner/Scanner.h"
+#include "Parser/Parser.h"
 using namespace std;
 
 int main(int argc, const char* argv[]) {
@@ -27,5 +28,7 @@ int main(int argc, const char* argv[]) {
     Scanner scanner(input.c_str());
     scanner.test();
 
+    Parser parser(&scanner);
+    parser.parseProgram();
     return 0;
 }

@@ -16,7 +16,7 @@ enum BinaryOp {
 class Exp {
 public:
     virtual int  accept(Visitor* visitor) = 0;
-    virtual ~Exp() = 0;
+    virtual ~Exp() {}
     static std::string binopToString(BinaryOp op);
 };
 
@@ -31,9 +31,10 @@ public:
 
 class IntegerExp : public Exp {
 public:
-    int value;
-    IntegerExp(int);
-    ~IntegerExp() = default;
+    uint64_t value;
+    VarType type;
+    IntegerExp(uint64_t);
+    ~IntegerExp() {}
     int accept(Visitor*) override;
 };
 
@@ -41,7 +42,7 @@ class IdentifierExp : public Exp {
 public:
     std::string name;
     IdentifierExp(const std::string&);
-    ~IdentifierExp() = default;
+    ~IdentifierExp() {}
     int accept(Visitor*) override;
 };
 
