@@ -1,5 +1,5 @@
 #include <iostream>
-#include "Visitor/PrintVisitor.h"
+#include "Visitor/PrintVisitor/PrintVisitor.h"
 
 #include "ASTNodes/Program.h"
 #include "ASTNodes/Function.h"
@@ -10,6 +10,7 @@ using namespace std;
 void PrintVisitor::print(Program* program) {
     cout << "Imprimiendo programa:\n\n";
     program->accept(this);
+    cout << "\n";
 }
 
 // Program
@@ -46,9 +47,9 @@ void PrintVisitor::visit(Function* function) {
     if (function->params) {
         function->params->accept(this);
     }
-    cout << ")";
+    cout << ") ";
     if (function->type != VOID_TYPE) {
-        cout << " -> " << varTypeToString(function->type) << " ";
+        cout << "-> " << varTypeToString(function->type) << " ";
     }
     cout << "{\n";
     function->body->accept(this);
@@ -122,25 +123,29 @@ void PrintVisitor::visit(ForStatement* stm) {
 }
 
 // Exp
-void PrintVisitor::visit(BinaryExp* exp) {
+IVisitorReturn* PrintVisitor::visit(BinaryExp* exp) {
     exp->left->accept(this);
     cout << " " << Exp::binopToString(exp->op) << " ";
     exp->right->accept(this);
+    return nullptr;
 }
 
-void PrintVisitor::visit(IntegerExp* exp) {
+IVisitorReturn* PrintVisitor::visit(IntegerExp* exp) {
     cout << exp->value;
+    return nullptr;
 }
 
-void PrintVisitor::visit(IdentifierExp* exp) {
+IVisitorReturn* PrintVisitor::visit(IdentifierExp* exp) {
     cout << exp->name;
+    return nullptr;
 }
 
-void PrintVisitor::visit(FunctionExp* exp) {
+IVisitorReturn* PrintVisitor::visit(FunctionExp* exp) {
     cout << exp->name << "(";
     for (auto it = exp->args.begin(); it != exp->args.end(); it++) {
         if (it != exp->args.begin()) cout << ", ";
         (*it)->accept(this);
     }
     cout << ")";
+    return nullptr;
 }

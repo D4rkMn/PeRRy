@@ -204,9 +204,24 @@ Stm* Parser::parseStatement() {
         }
         string text = previous->text;
         PrintStatement* stm = new PrintStatement(text);
+        // Get print string args '{}'
+        size_t args = 0;
+        size_t i = 0;
+        while (i < text.length() && text[i] != '"') {
+            if (i+1 < text.length() && text[i] == '{' && text[i+1] == '}') {
+                args++;
+            }
+            i++;
+        }
         // Get args
         while (match(Token::COMMA)) {
             stm->expList.push_back(parseCExpression());
+        }
+        if (stm->expList.size() != args) {
+            string msg = "Error: Se esperaban '" + to_string(args) +
+                "' parámetros, pero en lugar se encontraron '" + to_string(stm->expList.size())
+                + "' parámetros - línea " + to_string(current->line);
+            throw runtime_error(msg);
         }
         if (!match(Token::RPAR)) {
             throw SyntaxError("Se esperaba un ')'");

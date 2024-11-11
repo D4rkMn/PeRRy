@@ -6,6 +6,7 @@
 #include "ASTNodes/ISharedASTNode.h"
 
 class IVisitor;
+class IVisitorReturn;
 
 enum BinaryOp {
     PLUS_OP, MINUS_OP, MUL_OP, DIV_OP, // Arithmetic operators
@@ -15,7 +16,7 @@ enum BinaryOp {
 
 class Exp {
 public:
-    virtual int  accept(IVisitor* visitor) = 0;
+    virtual IVisitorReturn* accept(IVisitor* visitor) = 0;
     virtual ~Exp() {}
     static std::string binopToString(BinaryOp op);
 };
@@ -26,7 +27,7 @@ public:
     BinaryOp op;
     BinaryExp(Exp*, Exp*, BinaryOp);
     ~BinaryExp();
-    int accept(IVisitor*) override;
+    IVisitorReturn* accept(IVisitor*) override;
 };
 
 class IntegerExp : public Exp {
@@ -35,7 +36,7 @@ public:
     VarType type;
     IntegerExp(uint64_t);
     ~IntegerExp() {}
-    int accept(IVisitor*) override;
+    IVisitorReturn* accept(IVisitor*) override;
 };
 
 class IdentifierExp : public Exp {
@@ -43,7 +44,7 @@ public:
     std::string name;
     IdentifierExp(const std::string&);
     ~IdentifierExp() {}
-    int accept(IVisitor*) override;
+    IVisitorReturn* accept(IVisitor*) override;
 };
 
 class FunctionExp : public Exp {
@@ -52,7 +53,7 @@ public:
     std::list<Exp*> args;
     FunctionExp(const std::string&);
     ~FunctionExp();
-    int accept(IVisitor*) override;
+    IVisitorReturn* accept(IVisitor*) override;
 };
 
 #endif

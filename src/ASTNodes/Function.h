@@ -13,7 +13,7 @@ public:
     std::string id;
     ParamDec(VarType, const std::string&);
     ~ParamDec() = default;
-    int accept(IVisitor* visitor);
+    void accept(IVisitor* visitor);
 };
 
 class ParamDecList {
@@ -21,7 +21,7 @@ public:
     std::list<ParamDec> params;
     ParamDecList() = default;
     ~ParamDecList() = default;
-    int accept(IVisitor*);
+    void accept(IVisitor*);
 };
 
 class Function : public ISharedASTNode {
@@ -32,7 +32,7 @@ public:
     Body* body;
     Function(const std::string&, ParamDecList*, VarType, Body*);
     ~Function();
-    int accept(IVisitor*) override;
+    void accept(IVisitor*) override;
     ASTNodeType getType() const override { return FUNCTION_NODE; }
 };
 

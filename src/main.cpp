@@ -4,7 +4,9 @@
 
 #include "Scanner/Scanner.h"
 #include "Parser/Parser.h"
-#include "Visitor/PrintVisitor.h"
+
+#include "Visitor/PrintVisitor/PrintVisitor.h"
+#include "Visitor/TypeVisitor/TypeVisitor.h"
 using namespace std;
 
 int main(int argc, const char* argv[]) {
@@ -34,5 +36,8 @@ int main(int argc, const char* argv[]) {
 
     PrintVisitor printer;
     printer.print(program);
+
+    TypeVisitor typeChecker;
+    typeChecker.check(program);
     return 0;
 }

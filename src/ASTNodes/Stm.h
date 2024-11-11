@@ -20,7 +20,7 @@ public:
     Exp* exp;
     ExpStatement(Exp*);
     ~ExpStatement();
-    int accept(IVisitor*) override;
+    void accept(IVisitor*) override;
 };
 
 class AssignStatement : public Stm {
@@ -29,7 +29,7 @@ public:
     Exp* rhs;
     AssignStatement(const std::string&, Exp*);
     ~AssignStatement();
-    int accept(IVisitor*) override;
+    void accept(IVisitor*) override;
 };
 
 class AdvanceStatement : public Stm {
@@ -38,7 +38,7 @@ public:
     Exp* rhs;
     AdvanceStatement(const std::string&, Exp*);
     ~AdvanceStatement();
-    int accept(IVisitor*) override;
+    void accept(IVisitor*) override;
 };
 
 class ReturnStatement : public Stm {
@@ -46,7 +46,7 @@ public:
     Exp* exp;
     ReturnStatement(Exp*);
     ~ReturnStatement();
-    int accept(IVisitor*) override;
+    void accept(IVisitor*) override;
 };
 
 class PrintStatement : public Stm {
@@ -55,7 +55,7 @@ public:
     std::list<Exp*> expList;
     PrintStatement(const std::string&);
     ~PrintStatement();
-    int accept(IVisitor*) override;
+    void accept(IVisitor*) override;
 };
 
 class IfStatement : public Stm {
@@ -65,7 +65,7 @@ public:
     Body* elseBody;
     IfStatement(Exp*, Body*, Body*);
     ~IfStatement();
-    int accept(IVisitor*) override;
+    void accept(IVisitor*) override;
 };
 
 class ForStatement : public Stm {
@@ -76,7 +76,7 @@ public:
     Body* body;
     ForStatement(const std::string&, Exp*, Exp*, Body*);
     ~ForStatement();
-    int accept(IVisitor* visitor) override;
+    void accept(IVisitor* visitor) override;
 };
 
 #endif

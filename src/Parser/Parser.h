@@ -16,16 +16,6 @@ class Body;
 class Stm;
 class Exp;
 
-class _SyntaxError {
-private:
-    std::string msg;
-public:
-    _SyntaxError(const std::string& msg) : msg(msg) {}
-    void operator()() const {
-        std::cout << msg << "\n";
-    }
-};
-
 class Parser {
 private:
     
@@ -37,7 +27,7 @@ private:
     bool match(Token::Type);
     bool check(Token::Type);
 
-    _SyntaxError SyntaxError(const std::string&) const;
+    std::runtime_error SyntaxError(const std::string&) const;
     VarType TokenTypeToVarType(Token::Type) const;
     BinaryOp TokenTypeToBinaryOp(Token::Type) const;
 

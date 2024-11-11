@@ -2,7 +2,7 @@
 #include <iostream>
 using namespace std;
 
-std::string varTypeToString(VarType type) {
+string varTypeToString(VarType type) {
     string s = "";
     switch (type) {
         case INT32_TYPE: s = "i32"; break;

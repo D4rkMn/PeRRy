@@ -45,10 +45,9 @@ bool Parser::isAtEnd() {
     return (current->type == Token::END);
 }
 
-_SyntaxError Parser::SyntaxError(const string& msg) const {
+runtime_error Parser::SyntaxError(const string& msg) const {
     string s = "Error: " + msg + ", pero en lugar se encontró '" + current->text + "' - línea " + to_string(current->line);
-    cerr << s << "\n";
-    return _SyntaxError(s);
+    return runtime_error(s);
 }
 
 VarType Parser::TokenTypeToVarType(Token::Type type) const {

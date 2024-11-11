@@ -9,76 +9,76 @@ using namespace std;
 
 // Program
 
-int VarDec::accept(IVisitor* v) {
+void VarDec::accept(IVisitor* v) {
     v->visit(this);
 }
 
-int Body::accept(IVisitor* v) {
+void Body::accept(IVisitor* v) {
     v->visit(this);
 }
 
-int Program::accept(IVisitor* v) {
+void Program::accept(IVisitor* v) {
     v->visit(this);
 }
 
 // Function
 
-int ParamDec::accept(IVisitor* v) {
+void ParamDec::accept(IVisitor* v) {
     v->visit(this);
 }
 
-int ParamDecList::accept(IVisitor* v) {
+void ParamDecList::accept(IVisitor* v) {
     v->visit(this);
 }
 
-int Function::accept(IVisitor* v) {
+void Function::accept(IVisitor* v) {
     v->visit(this);
 }
 
 // Stm
 
-int ExpStatement::accept(IVisitor* v) {
+void ExpStatement::accept(IVisitor* v) {
     v->visit(this);
 }
 
-int AssignStatement::accept(IVisitor* v) {
+void AssignStatement::accept(IVisitor* v) {
     v->visit(this);
 }
 
-int AdvanceStatement::accept(IVisitor* v) {
+void AdvanceStatement::accept(IVisitor* v) {
     v->visit(this);
 }
 
-int ReturnStatement::accept(IVisitor* v) {
+void ReturnStatement::accept(IVisitor* v) {
     v->visit(this);
 }
 
-int PrintStatement::accept(IVisitor* v) {
+void PrintStatement::accept(IVisitor* v) {
     v->visit(this);
 }
 
-int IfStatement::accept(IVisitor* v) {
+void IfStatement::accept(IVisitor* v) {
     v->visit(this);
 }
 
-int ForStatement::accept(IVisitor* v) {
+void ForStatement::accept(IVisitor* v) {
     v->visit(this);
 }
 
 // Exp
 
-int BinaryExp::accept(IVisitor* v) {
-    v->visit(this);
+IVisitorReturn* BinaryExp::accept(IVisitor* v) {
+    return v->visit(this);
 }
 
-int IntegerExp::accept(IVisitor* v) {
-    v->visit(this);
+IVisitorReturn* IntegerExp::accept(IVisitor* v) {
+    return v->visit(this);
 }
 
-int IdentifierExp::accept(IVisitor* v) {
-    v->visit(this);
+IVisitorReturn* IdentifierExp::accept(IVisitor* v) {
+    return v->visit(this);
 }
 
-int FunctionExp::accept(IVisitor* v) {
-    v->visit(this);
+IVisitorReturn* FunctionExp::accept(IVisitor* v) {
+    return v->visit(this);
 }

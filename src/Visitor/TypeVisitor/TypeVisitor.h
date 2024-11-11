@@ -1,11 +1,14 @@
-#ifndef PRINTVISITOR_H
-#define PRINTVISITOR_H
+#ifndef TYPEVISITOR_H
+#define TYPEVISITOR_H
 
 #include "Visitor/IVisitor.h"
+#include "Environment/Environment.h"
 
-class PrintVisitor : public IVisitor {
+class TypeVisitor : public IVisitor {
+private:
+    Environment<int> test;
 public:
-    void print(Program*);
+    void check(Program*);
     // Program
     void visit(Program*) override;
     void visit(Body*) override;
@@ -23,10 +26,10 @@ public:
     void visit(IfStatement*) override;
     void visit(ForStatement*) override;
     // Exp
-    void visit(BinaryExp*) override;
-    void visit(IntegerExp*) override;
-    void visit(IdentifierExp*) override;
-    void visit(FunctionExp*) override;
+    IVisitorReturn* visit(BinaryExp*) override;
+    IVisitorReturn* visit(IntegerExp*) override;
+    IVisitorReturn* visit(IdentifierExp*) override;
+    IVisitorReturn* visit(FunctionExp*) override;
 };
 
 #endif

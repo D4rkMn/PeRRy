@@ -1,6 +1,8 @@
 #ifndef IVISITOR_H
 #define IVISITOR_H
 
+class IVisitorReturn;
+
 // Program
 class Program;
 class Body;
@@ -42,10 +44,10 @@ public:
     virtual void visit(IfStatement*) = 0;
     virtual void visit(ForStatement*) = 0;
     // Exp
-    virtual void visit(BinaryExp*) = 0;
-    virtual void visit(IntegerExp*) = 0;
-    virtual void visit(IdentifierExp*) = 0;
-    virtual void visit(FunctionExp*) = 0;
+    virtual IVisitorReturn* visit(BinaryExp*) = 0;
+    virtual IVisitorReturn* visit(IntegerExp*) = 0;
+    virtual IVisitorReturn* visit(IdentifierExp*) = 0;
+    virtual IVisitorReturn* visit(FunctionExp*) = 0;
 };
 
 #endif
