@@ -5,6 +5,8 @@ using namespace std;
 Token::Type Token::wordToToken(const std::string& word) {
     // Variable declaration tokens
     if (word == "let") return LET;
+    if (word == "const") return CONST;
+    if (word == "static") return STATIC;
     if (word == "mut") return MUT;
     // Type tokens
     if (word == "i32") return INT32;
@@ -12,6 +14,8 @@ Token::Type Token::wordToToken(const std::string& word) {
     // Function tokens
     if (word == "fn") return FUNCTION;
     if (word == "return") return RETURN;
+    // Scope tokens
+    if (word == "unsafe") return UNSAFE;
     // If-Else tokens
     if (word == "if") return IF;
     if (word == "else") return ELSE;

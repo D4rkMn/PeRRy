@@ -6,8 +6,8 @@ template <typename T>
 int Environment<T>::searchRib(const string& var) const {
     int idx = ribs.size() - 1;
     while (idx >= 0) {
-        auto it = ribs[idx].find(var);
-        if (it != ribs[idx].end()) {
+        auto it = ribs.at(idx).find(var);
+        if (it != ribs.at(idx).end()) {
             return idx;
         }
         idx--;
@@ -31,7 +31,10 @@ void Environment<T>::addVariable(const string& var, const T& value) {
     if (ribs.size() == 0) {
         throw runtime_error("Error: Environment sin niveles - no se pueden agregar variables");
     }
-    ribs.back()[var] = value;
+    if (ribs.back().find(var) != ribs.back().end()) {
+        throw runtime_error("Error: La variable ya ha sido declarada en este scope");
+    }
+    ribs.back().insert({var, value});
 }
 
 template <typename T>
@@ -70,5 +73,5 @@ optional<T> Environment<T>::getVariableValue(const string& x) const {
     if (idx < 0) {
         return nullopt;
     }
-    return ribs[idx][x];
+    return ribs.at(idx).at(x);
 }

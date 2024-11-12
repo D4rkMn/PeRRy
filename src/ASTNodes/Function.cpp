@@ -4,7 +4,7 @@ using namespace std;
 
 // ParamDec
 
-ParamDec::ParamDec(VarType type, const string& id) : type(type), id(id) {}
+ParamDec::ParamDec(VarType type, const string& id, bool mut) : type(type), id(id), mut(mut) {}
 
 // ParamDecList
 

@@ -76,7 +76,23 @@ public:
     Body* body;
     ForStatement(const std::string&, Exp*, Exp*, Body*);
     ~ForStatement();
-    void accept(IVisitor* visitor) override;
+    void accept(IVisitor*) override;
+};
+
+class UnsafeStatement : public Stm {
+public:
+    Body* body;
+    UnsafeStatement(Body*);
+    ~UnsafeStatement();
+    void accept(IVisitor*) override;
+};
+
+class ScopeStatement : public Stm {
+public:
+    Body* body;
+    ScopeStatement(Body*);
+    ~ScopeStatement();
+    void accept(IVisitor*) override;
 };
 
 #endif

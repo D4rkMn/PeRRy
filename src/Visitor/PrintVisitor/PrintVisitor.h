@@ -4,12 +4,17 @@
 #include "Visitor/IVisitor.h"
 
 class PrintVisitor : public IVisitor {
+private:
+    size_t indent = 0;
+    void printIndent() const;
 public:
     void print(Program*);
     // Program
     void visit(Program*) override;
     void visit(Body*) override;
-    void visit(VarDec*) override;
+    void visit(LetVar*) override;
+    void visit(StaticVar*) override;
+    void visit(ConstVar*) override;
     // Function
     void visit(Function*) override;
     void visit(ParamDecList*) override;
@@ -22,6 +27,8 @@ public:
     void visit(PrintStatement*) override;
     void visit(IfStatement*) override;
     void visit(ForStatement*) override;
+    void visit(UnsafeStatement*) override;
+    void visit(ScopeStatement*) override;
     // Exp
     IVisitorReturn* visit(BinaryExp*) override;
     IVisitorReturn* visit(IntegerExp*) override;

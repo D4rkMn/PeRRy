@@ -3,11 +3,19 @@
 #include "ASTNodes/Exp.h"
 using namespace std;
 
-// VarDec
+// Variable Declarations
 
-VarDec::VarDec(bool mut, const string& id, VarType type, Exp* exp)
+LetVar::LetVar(bool mut, const string& id, VarType type, Exp* exp)
     : mut(mut), id(id), type(type), exp(exp) {}
-VarDec::~VarDec() { delete exp; }
+LetVar::~LetVar() { delete exp; }
+
+StaticVar::StaticVar(bool mut, const string& id, VarType type, Exp* exp)
+    : mut(mut), id(id), type(type), exp(exp) {}
+StaticVar::~StaticVar() { delete exp; }
+
+ConstVar::ConstVar(const string& id, VarType type, Exp* exp)
+    : id(id), type(type), exp(exp) {}
+ConstVar::~ConstVar() { delete exp; }
 
 // Body
 
@@ -20,6 +28,9 @@ Body::~Body() {
 void Body::add(ISharedASTNode* node) {
     if (node->getType() == FUNCTION_NODE) {
         throw runtime_error("Error: Body can't have a function!");
+    }
+    if (node->getType() == STATICVAR_NODE) {
+        throw runtime_error("Error: Body can't have a static variable!");
     }
     bodyList.push_back(node);
 }
@@ -35,6 +46,9 @@ Program::~Program() {
 void Program::add(ISharedASTNode* node) {
     if (node->getType() == STM_NODE) {
         throw runtime_error("Error: Program can't have a statement!");
+    }
+    if (node->getType() == LETVAR_NODE) {
+        throw runtime_error("Error: Program can't have a 'let' variable declaration!");
     }
     programList.push_back(node);
 }

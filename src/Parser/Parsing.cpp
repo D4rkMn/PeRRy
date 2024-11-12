@@ -15,8 +15,14 @@ Program* Parser::parseProgram() {
         if (match(Token::FUNCTION)) {
             program->add(parseFunction());
         }
-        else if (match(Token::LET)) {
-            program->add(parseVarDec());
+        else if (match(Token::CONST)) {
+            program->add(parseConstVar());
+            if (!match(Token::SEMICOLON)) {
+                throw SyntaxError("Se esperaba un ';' después de la declaración");
+            }
+        }
+        else if (match(Token::STATIC)) {
+            program->add(parseStaticVar());
             if (!match(Token::SEMICOLON)) {
                 throw SyntaxError("Se esperaba un ';' después de la declaración");
             }
@@ -46,7 +52,7 @@ Function* Parser::parseFunction() {
         }
     }
     // Get type
-    VarType type = VOID_TYPE;
+    VarType type = VarType::VOID_TYPE;
     if (match(Token::RARROW)) {
         if (!match(Token::INT32) && !match(Token::INT64)) {
             throw SyntaxError("Se esperaba un tipo");
@@ -65,66 +71,105 @@ Function* Parser::parseFunction() {
 
 ParamDecList* Parser::parseParamDecList() {
     ParamDecList* params = new ParamDecList();
-    if (!match(Token::ID)) {
-        throw SyntaxError("Se esperaba un identificador");
+    bool mut = false;
+    if (match(Token::MUT)) {
+        mut = true;
+    }
+    if (!match(Token::ID_DEC)) {
+        throw SyntaxError("Se esperaba un identificador + ':'");
     }
     string id = previous->text;
-    if (!match(Token::COLON)) {
-        throw SyntaxError("Se esperaba un ':'");
-    }
     if (!match(Token::INT32) && !match(Token::INT64)) {
         throw SyntaxError("Se esperaba un tipo");
     }
     VarType type = TokenTypeToVarType(previous->type);
-    params->params.emplace_back(type, id);
+    params->params.emplace_back(type, id, mut);
     // Keep matching params
     while (match(Token::COMMA)) {
-        if (!match(Token::ID)) {
-            throw SyntaxError("Se esperaba un identificador");
+        bool mut = false;
+        if (match(Token::MUT)) {
+            mut = true;
+        }
+        if (!match(Token::ID_DEC)) {
+            throw SyntaxError("Se esperaba un identificador + ':'");
         }
         string id = previous->text;
-        if (!match(Token::COLON)) {
-            throw SyntaxError("Se esperaba un ':'");
-        }
         if (!match(Token::INT32) && !match(Token::INT64)) {
             throw SyntaxError("Se esperaba un tipo");
         }
         VarType type = TokenTypeToVarType(previous->type);
-        params->params.emplace_back(type, id);
+        params->params.emplace_back(type, id, mut);
     }
     return params;
 }
 
-VarDec* Parser::parseVarDec() {
+LetVar* Parser::parseLetVar() {
     bool mut = false;
     if (match(Token::MUT)) mut = true;
+    // Explicit type
+    if (match(Token::ID_DEC)) {
+        string id = previous->text;
+        if (!match(Token::INT32) && !match(Token::INT64)) {
+            throw SyntaxError("Se esperaba un tipo");
+        }
+        VarType type = TokenTypeToVarType(previous->type);
+        // Explicit and assignment
+        Exp* exp = nullptr;
+        if (match(Token::ASSIGN)) {
+            exp = parseCExpression();
+        }
+        // If non mut (const) and no assignment
+        else if (!mut) {
+            throw SyntaxError("Se esperaba un '=' a la variable no mutable");
+        }
+        return new LetVar(mut, id, type, exp);
+    }
+    // Inferred type
     if (!match(Token::ID)) {
         throw SyntaxError("Se esperaba un identificador");
     }
     string id = previous->text;
-    // Inferred type
-    if (!match(Token::COLON)) {
-        if (!match(Token::ASSIGN)) {
-            throw SyntaxError("Se esperaba un '='");
-        }
-        Exp* exp = parseCExpression();
-        return new VarDec(mut, id, UNKNOWN_TYPE, exp);
+    if (!match(Token::ASSIGN)) {
+        throw SyntaxError("Se esperaba un '='");
     }
+    Exp* exp = parseCExpression();
+    return new LetVar(mut, id, VarType::UNKNOWN_TYPE, exp);
+}
+
+StaticVar* Parser::parseStaticVar() {
+    bool mut = false;
+    if (match(Token::MUT)) mut = true;
     // Explicit type
+    if (!match(Token::ID_DEC)) {
+        throw SyntaxError("Se esperaba un identificador + ':'");
+    }
+    string id = previous->text;
     if (!match(Token::INT32) && !match(Token::INT64)) {
         throw SyntaxError("Se esperaba un tipo");
     }
     VarType type = TokenTypeToVarType(previous->type);
-    // Explicit and assignment
-    Exp* exp = nullptr;
-    if (match(Token::ASSIGN)) {
-        exp = parseCExpression();
+    if (!match(Token::ASSIGN)) {
+        throw SyntaxError("Se esperaba un '='");
     }
-    // If non mut (const) and no assignment
-    else if (!mut) {
-        throw SyntaxError("Se esperaba un '=' a la variable no mutable");
+    Exp* exp = parseCExpression();
+    return new StaticVar(mut, id, type, exp);
+}
+
+ConstVar* Parser::parseConstVar() {
+    // Explicit type
+    if (!match(Token::ID_DEC)) {
+        throw SyntaxError("Se esperaba un identificador + ':'");
     }
-    return new VarDec(mut, id, type, exp);
+    string id = previous->text;
+    if (!match(Token::INT32) && !match(Token::INT64)) {
+        throw SyntaxError("Se esperaba un tipo");
+    }
+    VarType type = TokenTypeToVarType(previous->type);
+    if (!match(Token::ASSIGN)) {
+        throw SyntaxError("Se esperaba un '='");
+    }
+    Exp* exp = parseCExpression();
+    return new ConstVar(id, type, exp);
 }
 
 Body* Parser::parseBody() {
@@ -134,8 +179,14 @@ Body* Parser::parseBody() {
         if (check(Token::RBRACKET)) {
             break;
         }
-        if (match(Token::LET)) {
-            body->add(parseVarDec());
+        else if (match(Token::LET)) {
+            body->add(parseLetVar());
+            if (!match(Token::SEMICOLON)) {
+                throw SyntaxError("Se esperaba un ';' después de la declaración");
+            }
+        }
+        else if (match(Token::CONST)) {
+            body->add(parseConstVar());
             if (!match(Token::SEMICOLON)) {
                 throw SyntaxError("Se esperaba un ';' después de la declaración");
             }
@@ -193,6 +244,25 @@ Stm* Parser::parseStatement() {
             throw SyntaxError("Se esperaba un '}'");
         }
         return new ForStatement(id, start, end, body);
+    }
+    // Parse unsafe
+    if (match(Token::UNSAFE)) {
+        if (!match(Token::LBRACKET)) {
+            throw SyntaxError("Se esperaba un '{'");
+        }
+        Body* body = parseBody();
+        if (!match(Token::RBRACKET)) {
+            throw SyntaxError("Se esperaba un '}'");
+        }
+        return new UnsafeStatement(body);
+    }
+    // Parse scope
+    if (match(Token::LBRACKET)) {
+        Body* body = parseBody();
+        if (!match(Token::RBRACKET)) {
+            throw SyntaxError("Se esperaba un '}'");
+        }
+        return new ScopeStatement(body);
     }
     // Parse print
     if (match(Token::PRINTLN)) {
@@ -253,6 +323,7 @@ Stm* Parser::parseStatement() {
             stm = new AdvanceStatement(id, parseCExpression());
         }
         else {
+            backtrack();
             stm = new ExpStatement(parseCExpression());
         }
         if (!match(Token::SEMICOLON)) {
@@ -260,7 +331,16 @@ Stm* Parser::parseStatement() {
         }
         return stm;
     }
-    throw SyntaxError("Se esperaba un statement");
+    try {
+        Exp* exp = parseCExpression();
+        if (!match(Token::SEMICOLON)) {
+            throw SyntaxError("Se esperaba un ';'");
+        }
+        return new ExpStatement(exp);
+    }
+    catch (exception& e) {
+        throw SyntaxError("Se esperaba un statement");
+    }
 }
 
 Exp* Parser::parseCExpression() {

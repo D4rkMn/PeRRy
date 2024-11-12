@@ -4,19 +4,43 @@
 #include <string>
 #include <list>
 #include "ASTNodes/ISharedASTNode.h"
+#include "Utility/VarType.h"
 
 class Exp;
 
-class VarDec : public ISharedASTNode {
+class LetVar : public ISharedASTNode {
 public:
     bool mut;
     std::string id;
     VarType type;
     Exp* exp;
-    VarDec(bool, const std::string&, VarType, Exp*);
-    ~VarDec();
+    LetVar(bool, const std::string&, VarType, Exp*);
+    ~LetVar();
     void accept(IVisitor*) override;
-    ASTNodeType getType() const override { return VARDEC_NODE; }
+    ASTNodeType getType() const override { return LETVAR_NODE; }
+};
+
+class StaticVar : public ISharedASTNode {
+public:
+    bool mut;
+    std::string id;
+    VarType type;
+    Exp* exp;
+    StaticVar(bool, const std::string&, VarType, Exp*);
+    ~StaticVar();
+    void accept(IVisitor*) override;
+    ASTNodeType getType() const override { return STATICVAR_NODE; }
+};
+
+class ConstVar : public ISharedASTNode {
+public:
+    std::string id;
+    VarType type;
+    Exp* exp;
+    ConstVar(const std::string&, VarType, Exp*);
+    ~ConstVar();
+    void accept(IVisitor*) override;
+    ASTNodeType getType() const override { return CONSTVAR_NODE; }
 };
 
 class Body {

@@ -15,8 +15,9 @@ std::ostream& operator << ( std::ostream& outs, const Token & tok ) {
     switch (tok.type) {
         // Variable declaration tokens
         case Token::LET: cout << "TOKEN(LET)"; break;
+        case Token::CONST: cout << "TOKEN(CONST)"; break;
+        case Token::STATIC: cout << "TOKEN(STATIC)"; break;
         case Token::MUT: cout << "TOKEN(MUT)"; break;
-        case Token::COLON: cout << "TOKEN(COLON)"; break;
         // Type tokens
         case Token::INT32: cout << "TOKEN(INT32)"; break;
         case Token::INT64: cout << "TOKEN(INT64)"; break;
@@ -33,6 +34,7 @@ std::ostream& operator << ( std::ostream& outs, const Token & tok ) {
         case Token::GREATER_EQ: cout << "TOKEN(GREATER_EQ)"; break;
         case Token::NEQUALS: cout << "TOKEN(NEQUALS)"; break;
         // Scope tokens
+        case Token::UNSAFE: cout << "TOKEN(UNSAFE)"; break;
         case Token::LBRACKET: cout << "TOKEN(LBRACKET)"; break;
         case Token::RBRACKET: cout << "TOKEN(RBRACKET)"; break;
         // Function tokens
@@ -63,6 +65,7 @@ std::ostream& operator << ( std::ostream& outs, const Token & tok ) {
         case Token::SEMICOLON: cout << "TOKEN(SEMICOLON)"; break;
         // Identifier
         case Token::ID: cout << "TOKEN(ID)"; break;
+        case Token::ID_DEC: cout << "TOKEN(ID_DEC)"; break;
         // Meta-tokens
         case Token::END: cout << "TOKEN(END)"; break;
         case Token::ERR: cout << "TOKEN(ERR)"; break; 

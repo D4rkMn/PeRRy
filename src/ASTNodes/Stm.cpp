@@ -56,3 +56,13 @@ ForStatement::~ForStatement() {
     delete end;
     delete body;
 }
+
+// UnsafeStatement
+
+UnsafeStatement::UnsafeStatement(Body* body) : body(body) {}
+UnsafeStatement::~UnsafeStatement() { if (body) delete body; }
+
+// ScopeStatement
+
+ScopeStatement::ScopeStatement(Body* body) : body(body) {}
+ScopeStatement::~ScopeStatement() { if (body) delete body; }

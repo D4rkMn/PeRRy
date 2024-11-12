@@ -20,6 +20,15 @@ bool Scanner::isNewline(char c) const {
 void Scanner::reset() {
     first = 0;
     current = 0;
+    line = 0;
+}
+
+void Scanner::backtrack() {
+    auto h = history.top();
+    first = h.first;
+    current = h.current;
+    line = h.line;
+    history.pop();
 }
 
 void Scanner::test() const {

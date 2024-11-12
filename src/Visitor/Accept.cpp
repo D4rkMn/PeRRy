@@ -9,7 +9,15 @@ using namespace std;
 
 // Program
 
-void VarDec::accept(IVisitor* v) {
+void LetVar::accept(IVisitor* v) {
+    v->visit(this);
+}
+
+void StaticVar::accept(IVisitor* v) {
+    v->visit(this);
+}
+
+void ConstVar::accept(IVisitor* v) {
     v->visit(this);
 }
 
@@ -62,6 +70,14 @@ void IfStatement::accept(IVisitor* v) {
 }
 
 void ForStatement::accept(IVisitor* v) {
+    v->visit(this);
+}
+
+void UnsafeStatement::accept(IVisitor* v) {
+    v->visit(this);
+}
+
+void ScopeStatement::accept(IVisitor* v) {
     v->visit(this);
 }
 

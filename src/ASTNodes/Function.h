@@ -4,6 +4,7 @@
 #include <list>
 #include <string>
 #include "ASTNodes/ISharedASTNode.h"
+#include "Utility/VarType.h"
 
 class Body;
 
@@ -11,7 +12,8 @@ class ParamDec {
 public:
     VarType type;
     std::string id;
-    ParamDec(VarType, const std::string&);
+    bool mut;
+    ParamDec(VarType, const std::string&, bool);
     ~ParamDec() = default;
     void accept(IVisitor* visitor);
 };

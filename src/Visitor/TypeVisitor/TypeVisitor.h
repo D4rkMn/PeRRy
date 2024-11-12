@@ -3,16 +3,26 @@
 
 #include "Visitor/IVisitor.h"
 #include "Environment/Environment.h"
+#include "Utility/VarType.h"
+#include "Utility/EnvVariable.h"
+#include "Utility/FunctionType.h"
+#include <iostream>
 
 class TypeVisitor : public IVisitor {
 private:
-    Environment<int> test;
+    Environment<EnvVariable> varEnv;
+    Environment<FunctionType> functionEnv;
+    VarType expectedReturnType = VarType::UNKNOWN_TYPE;
+    std::runtime_error TypeError(VarType, VarType);
+    VarType getType(IVisitorReturn*) const;
 public:
     void check(Program*);
     // Program
     void visit(Program*) override;
     void visit(Body*) override;
-    void visit(VarDec*) override;
+    void visit(LetVar*) override;
+    void visit(StaticVar*) override;
+    void visit(ConstVar*) override;
     // Function
     void visit(Function*) override;
     void visit(ParamDecList*) override;
@@ -25,6 +35,8 @@ public:
     void visit(PrintStatement*) override;
     void visit(IfStatement*) override;
     void visit(ForStatement*) override;
+    void visit(UnsafeStatement*) override;
+    void visit(ScopeStatement*) override;
     // Exp
     IVisitorReturn* visit(BinaryExp*) override;
     IVisitorReturn* visit(IntegerExp*) override;

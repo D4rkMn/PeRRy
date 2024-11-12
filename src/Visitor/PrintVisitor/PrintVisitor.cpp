@@ -7,6 +7,12 @@
 #include "ASTNodes/Exp.h"
 using namespace std;
 
+void PrintVisitor::printIndent() const {
+    for (size_t i = 0; i < indent; i++) {
+        cout << "    ";
+    }
+}
+
 void PrintVisitor::print(Program* program) {
     cout << "Imprimiendo programa:\n\n";
     program->accept(this);
@@ -22,22 +28,45 @@ void PrintVisitor::visit(Program* program) {
 }
 
 void PrintVisitor::visit(Body* body) {
+    indent++;
     for (auto it = body->bodyList.begin(); it != body->bodyList.end(); it++) {
         (*it)->accept(this);
         cout << "\n";
     }
+    indent--;
 }
 
-void PrintVisitor::visit(VarDec* vardec) {
+void PrintVisitor::visit(LetVar* vardec) {
+    printIndent();
     cout << "let ";
     if (vardec->mut) cout << "mut ";
     cout << vardec->id << " ";
-    if (vardec->type != UNKNOWN_TYPE) {
+    if (vardec->type != VarType::UNKNOWN_TYPE) {
         cout << ": " << varTypeToString(vardec->type) << " ";
     }
     if (vardec->exp) {
-        cout << "= " << vardec->exp->accept(this);
+        cout << "= ";
+        vardec->exp->accept(this);
     }
+    cout << ";";
+}
+
+void PrintVisitor::visit(StaticVar* vardec) {
+    printIndent();
+    cout << "static ";
+    if (vardec->mut) cout << "mut ";
+    cout << vardec->id << ": ";
+    cout << varTypeToString(vardec->type) << " = ";
+    vardec->exp->accept(this);
+    cout << ";";
+}
+
+void PrintVisitor::visit(ConstVar* vardec) {
+    printIndent();
+    cout << "const ";
+    cout << vardec->id << ": ";
+    cout << varTypeToString(vardec->type) << " = ";
+    vardec->exp->accept(this);
     cout << ";";
 }
 
@@ -48,7 +77,7 @@ void PrintVisitor::visit(Function* function) {
         function->params->accept(this);
     }
     cout << ") ";
-    if (function->type != VOID_TYPE) {
+    if (function->type != VarType::VOID_TYPE) {
         cout << "-> " << varTypeToString(function->type) << " ";
     }
     cout << "{\n";
@@ -69,56 +98,83 @@ void PrintVisitor::visit(ParamDec* param) {
 
 // Stm
 void PrintVisitor::visit(ExpStatement* stm) {
+    printIndent();
     stm->exp->accept(this);
     cout << ";";
 }
 
 void PrintVisitor::visit(AssignStatement* stm) {
+    printIndent();
     cout << stm->id << " = ";
     stm->rhs->accept(this);
     cout << ";";
 }
 
 void PrintVisitor::visit(AdvanceStatement* stm) {
+    printIndent();
     cout << stm->id << " += ";
     stm->rhs->accept(this);
     cout << ";";
 }
 
 void PrintVisitor::visit(ReturnStatement* stm) {
+    printIndent();
     cout << "return ";
-    stm->exp->accept(this);
+    if (stm->exp) stm->exp->accept(this);
     cout << ";";
 }
 
 void PrintVisitor::visit(PrintStatement* stm) {
+    printIndent();
     cout << "println!(" << '"' << stm->textLiteral << '"';
     for (auto it = stm->expList.begin(); it != stm->expList.end(); it++) {
         cout << ", ";
         (*it)->accept(this);
     }
-    cout << ")";
+    cout << ");";
 }
 
 void PrintVisitor::visit(IfStatement* stm) {
+    printIndent();
     cout << "if ";
     stm->condition->accept(this);
     cout << " {\n";
     stm->ifBody->accept(this);
+    printIndent();
     cout << "}";
     if (!stm->elseBody) return;
+    printIndent();
     cout << "\nelse {\n";
     stm->elseBody->accept(this);
+    printIndent();
     cout << "}";
 }
 
 void PrintVisitor::visit(ForStatement* stm) {
+    printIndent();
     cout << "for " << stm->id << " in ";
     stm->start->accept(this);
     cout << "..";
     stm->end->accept(this);
     cout << " {\n";
     stm->body->accept(this);
+    printIndent();
+    cout << "}";
+}
+
+void PrintVisitor::visit(UnsafeStatement* stm) {
+    printIndent();
+    cout << "unsafe {\n";
+    stm->body->accept(this);
+    printIndent();
+    cout << "}";
+}
+
+void PrintVisitor::visit(ScopeStatement* stm) {
+    printIndent();
+    cout << "{\n";
+    stm->body->accept(this);
+    printIndent();
     cout << "}";
 }
 

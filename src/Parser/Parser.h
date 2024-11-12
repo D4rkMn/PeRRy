@@ -5,12 +5,15 @@
 #include "Scanner/Scanner.h"
 #include "ASTNodes/ISharedASTNode.h"
 #include "ASTNodes/Exp.h"
+#include "Utility/VarType.h"
 
 class Program;
 
 class Function;
 class ParamDecList;
-class VarDec;
+class LetVar;
+class StaticVar;
+class ConstVar;
 
 class Body;
 class Stm;
@@ -24,6 +27,7 @@ private:
 
     bool advance();
     bool isAtEnd();
+    void backtrack();
     bool match(Token::Type);
     bool check(Token::Type);
 
@@ -33,7 +37,9 @@ private:
 
     Function* parseFunction();
     ParamDecList* parseParamDecList();
-    VarDec* parseVarDec();
+    LetVar* parseLetVar();
+    StaticVar* parseStaticVar();
+    ConstVar* parseConstVar();
 
     Body* parseBody();
     Stm* parseStatement();

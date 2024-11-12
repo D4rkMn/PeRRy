@@ -21,6 +21,7 @@ public:
     void clear();
     void addLevel();
     bool removeLevel();
+
     void addVariable(const std::string&);
     void addVariable(const std::string&, const T&);
     bool updateVariableValue(const std::string&, const T&);

@@ -4,6 +4,7 @@
 #include <list>
 #include <string>
 #include "ASTNodes/ISharedASTNode.h"
+#include "Utility/VarType.h"
 
 class IVisitor;
 class IVisitorReturn;

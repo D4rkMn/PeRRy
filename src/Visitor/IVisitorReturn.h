@@ -5,7 +5,7 @@ class IVisitorReturn {
 public:
     
     enum Type {
-        
+        TYPE_RETURN  
     };
 
     virtual ~IVisitorReturn() = default;

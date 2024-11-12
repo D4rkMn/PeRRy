@@ -8,6 +8,7 @@ using namespace std;
 
 Token* Scanner::nextToken() {
     Token* token;
+    history.push({first, current, line});
 
     // Skip empty characters
     while (current < input.length() && isWhiteSpace(input[current])) {
@@ -51,6 +52,11 @@ Token* Scanner::nextToken() {
         if (word == "println" && current < input.length() && input[current] == '!') {
             current++;
             return new Token(Token::PRINTLN, word, 0, word.length(), line);
+        }
+        // Edge case: Identifier with explicit type (':')
+        if (current < input.length() && input[current] == ':') {
+            current++;
+            return new Token(Token::ID_DEC, word, 0, word.length(), line);
         }
         // Return identifier
         return new Token(Token::ID, word, 0, word.length(), line);
@@ -176,7 +182,6 @@ Token* Scanner::nextToken() {
                 break;
             }
             case ';': token = new Token(Token::SEMICOLON, c, line); break;
-            case ':': token = new Token(Token::COLON, c, line); break;
             default: {
                 cout << "No debería llegar acá\n";
                 token = new Token(Token::ERR, c, line);

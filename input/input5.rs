@@ -1,12 +1,11 @@
 fn main() {
-    let mut x: i32;
+    let mut x = 5;
     let mut y: i32;
     let mut z: i64;
 
-    x = 1;
+    x = 5;
     y = 10;
-    z = 1000000;
-    x = 20;
+    //z = 1000000;
 
     println!("{}", x);
     println!("{}", y);

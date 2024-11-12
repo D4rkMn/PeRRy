@@ -6,7 +6,9 @@ class IVisitorReturn;
 // Program
 class Program;
 class Body;
-class VarDec;
+class LetVar;
+class StaticVar;
+class ConstVar;
 // Function
 class Function;
 class ParamDecList;
@@ -19,6 +21,8 @@ class ReturnStatement;
 class PrintStatement;
 class IfStatement;
 class ForStatement;
+class UnsafeStatement;
+class ScopeStatement;
 // Exp
 class BinaryExp;
 class IntegerExp;
@@ -30,7 +34,9 @@ public:
     // Program
     virtual void visit(Program*) = 0;
     virtual void visit(Body*) = 0;
-    virtual void visit(VarDec*) = 0;
+    virtual void visit(LetVar*) = 0;
+    virtual void visit(StaticVar*) = 0;
+    virtual void visit(ConstVar*) = 0;
     // Function
     virtual void visit(Function*) = 0;
     virtual void visit(ParamDecList*) = 0;
@@ -43,6 +49,8 @@ public:
     virtual void visit(PrintStatement*) = 0;
     virtual void visit(IfStatement*) = 0;
     virtual void visit(ForStatement*) = 0;
+    virtual void visit(UnsafeStatement*) = 0;
+    virtual void visit(ScopeStatement*) = 0;
     // Exp
     virtual IVisitorReturn* visit(BinaryExp*) = 0;
     virtual IVisitorReturn* visit(IntegerExp*) = 0;

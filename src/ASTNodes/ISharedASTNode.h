@@ -5,18 +5,11 @@
 
 class IVisitor;
 
-enum VarType {
-    INT32_TYPE,
-    INT64_TYPE,
-    VOID_TYPE,
-    UNKNOWN_TYPE
-};
-
-std::string varTypeToString(VarType);
-
 enum ASTNodeType {
     FUNCTION_NODE,
-    VARDEC_NODE,
+    LETVAR_NODE,
+    STATICVAR_NODE,
+    CONSTVAR_NODE,
     STM_NODE
 };
 

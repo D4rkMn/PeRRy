@@ -45,6 +45,12 @@ bool Parser::isAtEnd() {
     return (current->type == Token::END);
 }
 
+void Parser::backtrack() {
+    scanner->backtrack();
+    current = previous;
+    previous = nullptr;
+}
+
 runtime_error Parser::SyntaxError(const string& msg) const {
     string s = "Error: " + msg + ", pero en lugar se encontró '" + current->text + "' - línea " + to_string(current->line);
     return runtime_error(s);

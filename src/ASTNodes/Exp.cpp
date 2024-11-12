@@ -30,7 +30,7 @@ BinaryExp::~BinaryExp() { delete left; delete right; }
 // IntegerExp
 
 IntegerExp::IntegerExp(uint64_t v) : value(v) {
-    type = (value < 2147483648) ? INT32_TYPE : INT64_TYPE;
+    type = (value < 2147483648) ? VarType::INT32_TYPE : VarType::INT64_TYPE;
 }
 
 // IdentifierExp
