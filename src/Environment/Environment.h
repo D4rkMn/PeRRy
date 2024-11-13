@@ -8,7 +8,7 @@
 
 template <typename T>
 class Environment {
-private:
+protected:
 
     std::vector< std::unordered_map<std::string, T> > ribs;
     int searchRib(const std::string& var) const;
@@ -18,9 +18,9 @@ public:
     Environment() = default;
     ~Environment() = default;
 
-    void clear();
+    virtual void clear();
     void addLevel();
-    bool removeLevel();
+    virtual bool removeLevel();
 
     void addVariable(const std::string&);
     void addVariable(const std::string&, const T&);

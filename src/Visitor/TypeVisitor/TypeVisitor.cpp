@@ -8,6 +8,7 @@
 #include "ASTNodes/Exp.h"
 using namespace std;
 
+// TODO: make i32 convertible to i64 
 runtime_error TypeVisitor::TypeError(VarType expected, VarType obtained) {
     string msg = "Error: Se esperaba '" + varTypeToString(expected) + "', pero se obtuvo '" + varTypeToString(obtained) + "'";
     return runtime_error(msg);
@@ -15,13 +16,14 @@ runtime_error TypeVisitor::TypeError(VarType expected, VarType obtained) {
 
 VarType TypeVisitor::getType(IVisitorReturn* ret) const {
     VarType obtainedType = dynamic_cast<TypeReturn*>(ret)->varType;
-    delete ret;
+    if (ret) delete ret;
     return obtainedType;
 }
 
 void TypeVisitor::check(Program* program) {
-    cout << "Verificando tipos:\n\n";
+    cout << "Verificando tipos:\n";
     program->accept(this);
+    cout << "Type checker exitoso\n\n";
 }
 
 // Program

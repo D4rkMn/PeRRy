@@ -40,12 +40,12 @@ void PrintVisitor::visit(LetVar* vardec) {
     printIndent();
     cout << "let ";
     if (vardec->mut) cout << "mut ";
-    cout << vardec->id << " ";
+    cout << vardec->id;
     if (vardec->type != VarType::UNKNOWN_TYPE) {
-        cout << ": " << varTypeToString(vardec->type) << " ";
+        cout << ": " << varTypeToString(vardec->type);
     }
     if (vardec->exp) {
-        cout << "= ";
+        cout << " = ";
         vardec->exp->accept(this);
     }
     cout << ";";
@@ -93,7 +93,8 @@ void PrintVisitor::visit(ParamDecList* params) {
 }
 
 void PrintVisitor::visit(ParamDec* param) {
-    cout << param->id << " : " << varTypeToString(param->type);
+    if (param->mut) cout << "mut ";
+    cout << param->id << ": " << varTypeToString(param->type);
 }
 
 // Stm

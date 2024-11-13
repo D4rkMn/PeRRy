@@ -36,6 +36,7 @@ public:
     uint64_t value;
     VarType type;
     IntegerExp(uint64_t);
+    IntegerExp(uint64_t, VarType);
     ~IntegerExp() {}
     IVisitorReturn* accept(IVisitor*) override;
 };

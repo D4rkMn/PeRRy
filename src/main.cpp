@@ -7,6 +7,7 @@
 
 #include "Visitor/PrintVisitor/PrintVisitor.h"
 #include "Visitor/TypeVisitor/TypeVisitor.h"
+#include "Visitor/ConstVisitor/ConstVisitor.h"
 using namespace std;
 
 int main(int argc, const char* argv[]) {
@@ -39,5 +40,10 @@ int main(int argc, const char* argv[]) {
 
     TypeVisitor typeChecker;
     typeChecker.check(program);
+
+    ConstVisitor constReplacer;
+    constReplacer.replace(program);
+
+    printer.print(program);
     return 0;
 }
