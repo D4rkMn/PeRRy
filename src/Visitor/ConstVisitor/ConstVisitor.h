@@ -5,6 +5,7 @@
 #include "Environment/Environment.h"
 #include "Environment/HeapEnvironment.h"
 #include "Utility/EnvVariable.h"
+#include "ASTNodes/Exp.h"
 
 class IEnvConst;
 class Exp;
@@ -21,6 +22,8 @@ private:
         FUNCTION_EXP
     };
     bool fetchingForConst = false;
+    bool replacingRootExp = false;
+    bool deleteConstDec = false;
     Exp* expParent = nullptr;
     ExpParentType parentType = ExpParentType::NONE;
 
@@ -29,8 +32,10 @@ private:
 
     long long getValue(IVisitorReturn*) const;
     long long envConstToLLong(IEnvConst*) const;
+    IVisitorReturn* evalBinaryExp(long long, long long, BinaryOp) const;
     void replaceBinary(BinaryExp*, IdentifierExp*, long long);
     void replaceFunction(FunctionExp*, IdentifierExp*, long long);
+    void replaceASTNode(Exp*&, long long);
 
 public:
     void replace(Program*);

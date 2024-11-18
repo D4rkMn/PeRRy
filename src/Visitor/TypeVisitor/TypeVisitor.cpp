@@ -33,6 +33,19 @@ void TypeVisitor::visit(Program* program) {
     for (auto it = program->programList.begin(); it != program->programList.end(); it++) {
         (*it)->accept(this);
     }
+    auto option = functionEnv.getVariableValue("main");
+    if (!option.has_value()) {
+        string msg = "Error: No se ha definido la función 'main'";
+        throw runtime_error(msg);
+    }
+    if (option.value().params.size() != 0) {
+        string msg = "Error: Se esperaban 0 parámetros para la función 'main'";
+        throw runtime_error(msg);
+    }
+    if (option.value().returnType != VarType::VOID_TYPE) {
+        string msg = "Error: Se esperaba tipo de retorno 'void' para la función 'main'";
+        throw runtime_error(msg);
+    }
     functionEnv.removeLevel();
     varEnv.removeLevel();
 }
@@ -180,7 +193,10 @@ void TypeVisitor::visit(IfStatement* stm) {
 }
 
 void TypeVisitor::visit(ForStatement* stm) {
+    varEnv.addLevel();
+    varEnv.addVariable(stm->id, EnvVariable());
     stm->body->accept(this);
+    varEnv.removeLevel();
 }
 
 void TypeVisitor::visit(UnsafeStatement* stm) {

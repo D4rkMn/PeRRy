@@ -4,7 +4,7 @@
 
 # Compiler settings - Can be customized.
 CC = g++
-CXXFLAGS = -std=c++20 -Wall -g -I./src
+CXXFLAGS = -std=c++20 -Wall -g -O0 -I./src
 
 INPUTFOLDER = input
 INPUTFILE = input5.rs
