@@ -255,6 +255,7 @@ void ConstVisitor::visit(ForStatement* stm) {
         replaceASTNode(stm->end, value);
         replacingRootExp = false;
     }
+    stm->body->accept(this);
 }
 
 void ConstVisitor::visit(UnsafeStatement* stm) {

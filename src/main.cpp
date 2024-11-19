@@ -8,6 +8,8 @@
 #include "Visitor/PrintVisitor/PrintVisitor.h"
 #include "Visitor/TypeVisitor/TypeVisitor.h"
 #include "Visitor/ConstVisitor/ConstVisitor.h"
+#include "Visitor/ExpReduceVisitor/ExpReduceVisitor.h"
+#include "Visitor/CodegenVisitor/CodegenVisitor.h"
 using namespace std;
 
 int main(int argc, const char* argv[]) {
@@ -43,6 +45,11 @@ int main(int argc, const char* argv[]) {
 
     ConstVisitor constReplacer;
     constReplacer.replace(program);
+
+    printer.print(program);
+
+    ExpReduceVisitor expReducer;
+    expReducer.reduce(program);
 
     printer.print(program);
     return 0;

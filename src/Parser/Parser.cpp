@@ -26,6 +26,24 @@ bool Parser::check(Token::Type ttype) {
     return (current->type == ttype);
 }
 
+bool Parser::matchVarType() {
+    if (checkVarType()) {
+        advance();
+        return true;
+    }
+    return false;
+}
+
+bool Parser::checkVarType() {
+    return (
+        check(Token::INT32) || 
+        check(Token::INT64) || 
+        check(Token::UINT32) || 
+        check(Token::UINT64) || 
+        check(Token::BOOL)
+    );
+}
+
 bool Parser::advance() {
     if (!isAtEnd()) {
         Token* temp = current;
@@ -56,10 +74,13 @@ runtime_error Parser::SyntaxError(const string& msg) const {
     return runtime_error(s);
 }
 
-VarType Parser::TokenTypeToVarType(Token::Type type) const {
+VarType Parser::tokenTypeToVarType(Token::Type type) const {
     switch (type) {
         case Token::INT32: return VarType::INT32_TYPE; break;
         case Token::INT64: return VarType::INT64_TYPE; break;
+        case Token::UINT32: return VarType::UINT32_TYPE; break;
+        case Token::UINT64: return VarType::UINT64_TYPE; break;
+        case Token::BOOL: return VarType::BOOL_TYPE; break;
         default: {
             string msg = "Error: Tipo no permitido - " + current->text;
             throw runtime_error(msg);
@@ -67,7 +88,7 @@ VarType Parser::TokenTypeToVarType(Token::Type type) const {
     }
 }
 
-BinaryOp Parser::TokenTypeToBinaryOp(Token::Type type) const {
+BinaryOp Parser::tokenTypeToBinaryOp(Token::Type type) const {
     switch (type) {
         // Arithmetic operators
         case Token::PLUS: return BinaryOp::PLUS_OP; break;

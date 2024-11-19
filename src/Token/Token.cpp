@@ -21,6 +21,9 @@ std::ostream& operator << ( std::ostream& outs, const Token & tok ) {
         // Type tokens
         case Token::INT32: cout << "TOKEN(INT32)"; break;
         case Token::INT64: cout << "TOKEN(INT64)"; break;
+        case Token::UINT32: cout << "TOKEN(UINT64)"; break;
+        case Token::UINT64: cout << "TOKEN(UINT64)"; break;
+        case Token::BOOL: cout << "TOKEN(BOOL)"; break;
         // Arithmetic operators
         case Token::PLUS: cout << "TOKEN(PLUS)"; break;
         case Token::MINUS: cout << "TOKEN(MINUS)"; break;
@@ -44,6 +47,8 @@ std::ostream& operator << ( std::ostream& outs, const Token & tok ) {
         // If-Else tokens
         case Token::IF: cout << "TOKEN(IF)"; break;
         case Token::ELSE: cout << "TOKEN(ELSE)"; break;
+        // While tokens
+        case Token::WHILE: cout << "TOKEN(WHILE)"; break;
         // For tokens
         case Token::FOR: cout << "TOKEN(FOR)"; break;
         case Token::RANGE: cout << "TOKEN(RANGE)"; break;
@@ -76,4 +81,50 @@ std::ostream& operator << ( std::ostream& outs, const Token & tok ) {
 
 std::ostream& operator << ( std::ostream& outs, const Token* tok ) {
     return outs << *tok;
+}
+
+bool Token::isVarType() const {
+    return (
+        type == Token::INT32 ||
+        type == Token::INT64 ||
+        type == Token::UINT32 ||
+        type == Token::UINT64 ||
+        type == Token::BOOL
+    );
+}
+
+VarType Token::toVarType() const {
+    switch (type) {
+        case Token::INT32: return VarType::INT32_TYPE; break;
+        case Token::INT64: return VarType::INT64_TYPE; break;
+        case Token::UINT32: return VarType::UINT32_TYPE; break;
+        case Token::UINT64: return VarType::UINT64_TYPE; break;
+        case Token::BOOL: return VarType::BOOL_TYPE; break;
+        default: {
+            string msg = "Error: Tipo no permitido - " + text;
+            throw runtime_error(msg);
+        }
+    }
+}
+
+BinaryOp Token::toBinaryOp() const {
+    switch (type) {
+        // Arithmetic operators
+        case Token::PLUS: return BinaryOp::PLUS_OP; break;
+        case Token::MINUS: return BinaryOp::MINUS_OP; break;
+        case Token::MUL: return BinaryOp::MUL_OP; break;
+        case Token::DIV: return BinaryOp::DIV_OP; break;
+        // Boolean operators
+        case Token::LESS: return BinaryOp::LESS_OP; break;
+        case Token::LESS_EQ: return BinaryOp::LESS_EQ_OP; break;
+        case Token::GREATER: return BinaryOp::GREATER_OP; break;
+        case Token::GREATER_EQ: return BinaryOp::GREATER_EQ_OP; break;
+        case Token::EQUALS: return BinaryOp::EQUALS_OP; break;
+        case Token::NEQUALS: return BinaryOp::NEQUALS_OP; break;
+        // Default
+        default: {
+            string msg = "Error: Tipo no permitido - " + text;
+            throw runtime_error(msg);
+        }
+    }
 }

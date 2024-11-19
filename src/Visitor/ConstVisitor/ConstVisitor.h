@@ -4,10 +4,10 @@
 #include "Visitor/IVisitor.h"
 #include "Environment/Environment.h"
 #include "Environment/HeapEnvironment.h"
+#include "Visitor/ConstVisitor/IEnvConst.h"
 #include "Utility/EnvVariable.h"
 #include "ASTNodes/Exp.h"
 
-class IEnvConst;
 class Exp;
 class IdentifierExp;
 class BinaryExp;

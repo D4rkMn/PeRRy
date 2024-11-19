@@ -54,10 +54,10 @@ Function* Parser::parseFunction() {
     // Get type
     VarType type = VarType::VOID_TYPE;
     if (match(Token::RARROW)) {
-        if (!match(Token::INT32) && !match(Token::INT64)) {
+        if (!matchVarType()) {
             throw SyntaxError("Se esperaba un tipo");
         }
-        type = TokenTypeToVarType(previous->type);
+        type = tokenTypeToVarType(previous->type);
     }
     if (!match(Token::LBRACKET)) {
         throw SyntaxError("Se esperaba un '{'");
@@ -79,10 +79,10 @@ ParamDecList* Parser::parseParamDecList() {
         throw SyntaxError("Se esperaba un identificador + ':'");
     }
     string id = previous->text;
-    if (!match(Token::INT32) && !match(Token::INT64)) {
+    if (!matchVarType()) {
         throw SyntaxError("Se esperaba un tipo");
     }
-    VarType type = TokenTypeToVarType(previous->type);
+    VarType type = tokenTypeToVarType(previous->type);
     params->params.emplace_back(type, id, mut);
     // Keep matching params
     while (match(Token::COMMA)) {
@@ -94,10 +94,10 @@ ParamDecList* Parser::parseParamDecList() {
             throw SyntaxError("Se esperaba un identificador + ':'");
         }
         string id = previous->text;
-        if (!match(Token::INT32) && !match(Token::INT64)) {
+        if (!matchVarType()) {
             throw SyntaxError("Se esperaba un tipo");
         }
-        VarType type = TokenTypeToVarType(previous->type);
+        VarType type = tokenTypeToVarType(previous->type);
         params->params.emplace_back(type, id, mut);
     }
     return params;
@@ -109,10 +109,10 @@ LetVar* Parser::parseLetVar() {
     // Explicit type
     if (match(Token::ID_DEC)) {
         string id = previous->text;
-        if (!match(Token::INT32) && !match(Token::INT64)) {
+        if (!matchVarType()) {
             throw SyntaxError("Se esperaba un tipo");
         }
-        VarType type = TokenTypeToVarType(previous->type);
+        VarType type = tokenTypeToVarType(previous->type);
         // Explicit and assignment
         Exp* exp = nullptr;
         if (match(Token::ASSIGN)) {
@@ -144,10 +144,10 @@ StaticVar* Parser::parseStaticVar() {
         throw SyntaxError("Se esperaba un identificador + ':'");
     }
     string id = previous->text;
-    if (!match(Token::INT32) && !match(Token::INT64)) {
+    if (!matchVarType()) {
         throw SyntaxError("Se esperaba un tipo");
     }
-    VarType type = TokenTypeToVarType(previous->type);
+    VarType type = tokenTypeToVarType(previous->type);
     if (!match(Token::ASSIGN)) {
         throw SyntaxError("Se esperaba un '='");
     }
@@ -161,10 +161,10 @@ ConstVar* Parser::parseConstVar() {
         throw SyntaxError("Se esperaba un identificador + ':'");
     }
     string id = previous->text;
-    if (!match(Token::INT32) && !match(Token::INT64)) {
+    if (!matchVarType()) {
         throw SyntaxError("Se esperaba un tipo");
     }
-    VarType type = TokenTypeToVarType(previous->type);
+    VarType type = tokenTypeToVarType(previous->type);
     if (!match(Token::ASSIGN)) {
         throw SyntaxError("Se esperaba un '='");
     }
@@ -350,7 +350,7 @@ Exp* Parser::parseCExpression() {
         match(Token::GREATER) || match(Token::GREATER_EQ) ||
         match(Token::EQUALS) || match(Token::NEQUALS)
     ) {
-        BinaryOp op = TokenTypeToBinaryOp(previous->type);
+        BinaryOp op = tokenTypeToBinaryOp(previous->type);
         Exp* right = parseExpression();
         left = new BinaryExp(left, right, op);
     }
@@ -360,7 +360,7 @@ Exp* Parser::parseCExpression() {
 Exp* Parser::parseExpression() {
     Exp* left = parseTerm();
     while (match(Token::PLUS) || match(Token::MINUS)) {
-        BinaryOp op = TokenTypeToBinaryOp(previous->type);
+        BinaryOp op = tokenTypeToBinaryOp(previous->type);
         Exp* right = parseTerm();
         left = new BinaryExp(left, right, op);
     }
@@ -370,7 +370,7 @@ Exp* Parser::parseExpression() {
 Exp* Parser::parseTerm() {
     Exp* left = parseFactor();
     while (match(Token::MUL) || match(Token::DIV)) {
-        BinaryOp op = TokenTypeToBinaryOp(previous->type);
+        BinaryOp op = tokenTypeToBinaryOp(previous->type);
         Exp* right = parseFactor();
         left = new BinaryExp(left, right, op);
     }
@@ -400,7 +400,7 @@ Exp* Parser::parseFactor() {
         return function;
     }
     if (match(Token::INTEGER)) {
-        return new IntegerExp(stoll(previous->text));
+        return new IntegerExp(stoll(previous->text), previous->varType);
     }
     if (match(Token::LPAR)) {
         Exp* exp = parseCExpression();

@@ -2,19 +2,22 @@
 #define TOKEN_H
 
 #include <string>
+#include "Utility/VarType.h"
+#include "ASTNodes/Exp.h"
 
 class Token {
 public:
 
     enum Type {
         LET, CONST, STATIC, MUT, // Variable declaration tokens
-        INT32, INT64, // Type tokens
+        INT32, INT64, UINT32, UINT64, BOOL, // Type tokens
         PLUS, MINUS, MUL, DIV, // Arithmetic operators
         LESS, LESS_EQ, EQUALS, // Boolean comparisons
         GREATER, GREATER_EQ, NEQUALS, // Boolean comparisons
         UNSAFE, LBRACKET, RBRACKET, // Scope tokens
         FUNCTION, RETURN, RARROW, // Function tokens
         IF, ELSE, // If-Else tokens
+        WHILE, // While tokens
         FOR, RANGE, IN, // For tokens
         INTEGER, TRUE, FALSE, TEXT, // Literal tokens
         ASSIGN, ADVANCE, // Miscellaneous operators
@@ -25,6 +28,7 @@ public:
     };
 
     Type type;
+    VarType varType = VarType::UNKNOWN_TYPE;
     std::string text;
     size_t line;
 
@@ -33,6 +37,10 @@ public:
     Token(Type, const std::string&, int, int, size_t);
 
     static Token::Type wordToToken(const std::string&);
+
+    bool isVarType() const;
+    VarType toVarType() const;
+    BinaryOp toBinaryOp() const;
 
     friend std::ostream& operator<<(std::ostream& outs, const Token& tok);
     friend std::ostream& operator<<(std::ostream& outs, const Token* tok);

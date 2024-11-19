@@ -40,7 +40,7 @@ void Scanner::test() const {
     cout << "Línea 1:\n";
     while ((current = testScanner.nextToken())->type != Token::END) {
         if (current->type == Token::ERR) {
-            string msg = "Error: Carácter inválido: '" + current->text + "' - línea " + to_string(line);
+            string msg = "Error: Carácter inválido: '" + current->text + "' - línea " + to_string(testScanner.line);
             throw runtime_error(msg);
         } else {
             cout << *current << "\n";

@@ -5,6 +5,7 @@
 #include <string>
 #include "ASTNodes/ISharedASTNode.h"
 #include "Utility/VarType.h"
+#include <variant>
 
 class IVisitor;
 class IVisitorReturn;
@@ -33,9 +34,9 @@ public:
 
 class IntegerExp : public Exp {
 public:
-    uint64_t value;
+    std::variant<int32_t, int64_t, uint32_t, uint64_t> value;
     VarType type;
-    IntegerExp(uint64_t);
+    IntegerExp(int32_t);
     IntegerExp(uint64_t, VarType);
     ~IntegerExp() {}
     IVisitorReturn* accept(IVisitor*) override;

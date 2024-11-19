@@ -33,13 +33,29 @@ Token* Scanner::nextToken() {
         while (current < input.length() && isdigit(input[current])) {
             current++;
         }
-        return new Token(Token::INTEGER, input, first, current - first, line);
+        token = new Token(Token::INTEGER, input, first, current - first, line);
+        VarType varType = VarType::UNKNOWN_TYPE;
+        // Fetch for type suffix annotation
+        if (input[current] != ' ') {
+            Token* t = nextToken();
+            if (t->isVarType()) {
+                varType = t->toVarType();
+                if (varType == VarType::BOOL_TYPE) {
+                    backtrack();
+                }
+            }
+            else {
+                backtrack();
+            }
+        }
+        token->varType = varType;
+        return token;
     }
 
     // Reserved keywords + Id
-    if (isalpha(c)) {
+    if (isalpha(c) || c == '_') {
         current++;
-        while (current < input.length() && isalnum(input[current])) {
+        while (current < input.length() && (isalnum(input[current]) || input[current] == '_')) {
             current++;
         }
         string word = input.substr(first, current - first);

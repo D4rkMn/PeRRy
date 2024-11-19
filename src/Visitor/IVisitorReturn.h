@@ -6,7 +6,8 @@ public:
     
     enum Type {
         TYPE_RETURN,
-        LLONG_RETURN  
+        LLONG_RETURN,
+        REDUCE_RETURN
     };
 
     virtual ~IVisitorReturn() = default;

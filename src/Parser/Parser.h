@@ -31,9 +31,12 @@ private:
     bool match(Token::Type);
     bool check(Token::Type);
 
+    bool matchVarType();
+    bool checkVarType();
+
     std::runtime_error SyntaxError(const std::string&) const;
-    VarType TokenTypeToVarType(Token::Type) const;
-    BinaryOp TokenTypeToBinaryOp(Token::Type) const;
+    VarType tokenTypeToVarType(Token::Type) const;
+    BinaryOp tokenTypeToBinaryOp(Token::Type) const;
 
     Function* parseFunction();
     ParamDecList* parseParamDecList();
