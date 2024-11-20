@@ -72,12 +72,16 @@ void ExpReduceVisitor::visit(Body* body) {
 
 void ExpReduceVisitor::visit(LetVar* vardec) {
     if (vardec->exp) {
+        lhsUnsigned = (vardec->type == VarType::UINT32_TYPE || vardec->type == VarType::UINT64_TYPE);
         replaceNode(vardec->exp);
+        lhsUnsigned = false;
     }
 }
 
 void ExpReduceVisitor::visit(StaticVar* vardec) {
+    lhsUnsigned = (vardec->type == VarType::UINT32_TYPE || vardec->type == VarType::UINT64_TYPE);
     replaceNode(vardec->exp);
+    lhsUnsigned = false;
 }
 
 void ExpReduceVisitor::visit(ConstVar* vardec) {
@@ -113,7 +117,7 @@ void ExpReduceVisitor::visit(AdvanceStatement* stm) {
 }
 
 void ExpReduceVisitor::visit(ReturnStatement* stm) {
-    replaceNode(stm->exp);
+    if (stm->exp) replaceNode(stm->exp);
 }
 
 void ExpReduceVisitor::visit(PrintStatement* stm) {

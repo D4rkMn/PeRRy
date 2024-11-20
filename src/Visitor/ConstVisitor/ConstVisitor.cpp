@@ -134,7 +134,9 @@ void ConstVisitor::visit(StaticVar* vardec) {
 void ConstVisitor::visit(ConstVar* vardec) {
     varEnv.addVariable(vardec->id, {EnvVariable::CONST_VAR, vardec->type, false});
     fetchingForConst = true;
+    lhsUnsigned = (vardec->type == VarType::UINT32_TYPE || vardec->type == VarType::UINT64_TYPE);
     auto e = vardec->exp->accept(this);
+    lhsUnsigned = false;
     fetchingForConst = false;
     ConstVariant value = getValue(e);
     if (replacingRootExp) {

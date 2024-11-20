@@ -55,6 +55,7 @@ IntegerExp::IntegerExp(const string& s) {
     if (NumberTester::fitsInInt32(s)) {
         value = int32_t(stoi(s));
         type = VarType::INT32_TYPE;
+        isImplicit = true;
         return;
     }
     string msg = "Error: El entero con valor '" + s + "' se le intentó asignar el tipo 'i32'";

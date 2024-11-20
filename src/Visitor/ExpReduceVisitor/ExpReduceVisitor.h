@@ -3,11 +3,15 @@
 
 #include "Visitor/IVisitor.h"
 #include "ASTNodes/Exp.h"
+#include "Environment/Environment.h"
 
 class IntegerExp;
 
 class ExpReduceVisitor : public IVisitor {
 private:
+    bool lhsUnsigned = false;
+    Environment<VarType> env;
+
     void replaceNode(Exp*&);
     IntegerExp* getNode(IVisitorReturn*) const;
 
@@ -18,7 +22,6 @@ private:
     template <typename T>
     IntegerExp* evalUnaryExp(const T&, UnaryOp) const;
     IntegerExp* evalUnaryExp_b(const bool&, UnaryOp) const;
-
 public:
     void reduce(Program*);
     // Program

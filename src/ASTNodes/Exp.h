@@ -51,6 +51,7 @@ class IntegerExp : public Exp {
 public:
     std::variant<int32_t, int64_t, uint32_t, uint64_t, bool> value;
     VarType type;
+    bool isImplicit = false;
     IntegerExp(const std::string&);
     IntegerExp(const std::string&, VarType);
     IntegerExp(int32_t);

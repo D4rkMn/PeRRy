@@ -120,8 +120,11 @@ void PrintVisitor::visit(AdvanceStatement* stm) {
 
 void PrintVisitor::visit(ReturnStatement* stm) {
     printIndent();
-    cout << "return ";
-    if (stm->exp) stm->exp->accept(this);
+    cout << "return";
+    if (stm->exp) {
+        cout << " ";
+        stm->exp->accept(this);
+    }
     cout << ";";
 }
 

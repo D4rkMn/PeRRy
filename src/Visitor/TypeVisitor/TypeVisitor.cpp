@@ -1,6 +1,7 @@
 #include <iostream>
 #include "Visitor/TypeVisitor/TypeVisitor.h"
 #include "Visitor/TypeVisitor/TypeReturn.h"
+#include "Utility/NumberTester.h"
 
 #include "ASTNodes/Program.h"
 #include "ASTNodes/Function.h"
@@ -11,6 +12,40 @@ using namespace std;
 void TypeVisitor::checkTypes(VarType expected, VarType obtained) const {
     if (expected != obtained) {
         throw TypeError(expected, obtained);
+    }
+}
+
+bool TypeVisitor::tryImplicitCast(VarType type, IntegerExp*& exp) const {
+    int32_t v = get<int32_t>(exp->value);
+    if (type == VarType::INT32_TYPE) {
+        return true;
+    }
+    if (type == VarType::INT64_TYPE) {
+        exp->value = int64_t(v);
+        exp->type = VarType::INT64_TYPE;
+        return true;
+    }
+    string s = to_string(v);
+    if (type == VarType::UINT32_TYPE) {
+        bool b = NumberTester::fitsInUInt32(s);
+        if (b) {
+            exp->value = uint32_t(v);
+            exp->type = VarType::UINT32_TYPE;
+            return true;
+        }
+        return false;
+    }
+    if (type == VarType::UINT64_TYPE) {
+        bool b = NumberTester::fitsInUInt64(s);
+        if (b) {
+            exp->value = uint64_t(v);
+            exp->type = VarType::UINT64_TYPE;
+            return true;
+        }
+        return false;
+    }
+    if (type == VarType::BOOL_TYPE) {
+        return false;
     }
 }
 
@@ -26,6 +61,7 @@ VarType TypeVisitor::getType(IVisitorReturn* ret) const {
 }
 
 void TypeVisitor::check(Program* program) {
+    awaitingReturn = false;
     cout << "Verificando tipos:\n";
     program->accept(this);
     cout << "Type checker exitoso\n\n";
@@ -65,6 +101,7 @@ void TypeVisitor::visit(Body* body) {
 
 void TypeVisitor::visit(LetVar* vardec) {
     if (vardec->type == VarType::UNKNOWN_TYPE) {
+        lhsType = vardec->type;
         vardec->type = getType(vardec->exp->accept(this));
         varEnv.addVariable(vardec->id, {EnvVariable::LET_VAR, vardec->type, vardec->mut});
         return;
@@ -73,19 +110,24 @@ void TypeVisitor::visit(LetVar* vardec) {
         varEnv.addVariable(vardec->id, {EnvVariable::LET_VAR, vardec->type, vardec->mut});
         return;
     }
+    lhsType = vardec->type;
     VarType obtainedType = getType(vardec->exp->accept(this));
     checkTypes(vardec->type, obtainedType);
     varEnv.addVariable(vardec->id, {EnvVariable::LET_VAR, vardec->type, vardec->mut});
 }
 
 void TypeVisitor::visit(StaticVar* vardec) {
+    lhsType = vardec->type;
     VarType obtainedType = getType(vardec->exp->accept(this));
+    lhsType = VarType::VOID_TYPE;
     checkTypes(vardec->type, obtainedType);
     varEnv.addVariable(vardec->id, {EnvVariable::STATIC_VAR, vardec->type, vardec->mut});
 }
 
 void TypeVisitor::visit(ConstVar* vardec) {
+    lhsType = vardec->type;
     VarType obtainedType = getType(vardec->exp->accept(this));
+    lhsType = VarType::VOID_TYPE;
     checkTypes(vardec->type, obtainedType);
     varEnv.addVariable(vardec->id, {EnvVariable::CONST_VAR, vardec->type, false});
 }
@@ -97,7 +139,10 @@ void TypeVisitor::visit(Function* function) {
     varEnv.addLevel();
     if (function->params) function->params->accept(this);
     expectedReturnType = function->type;
+    obtainedReturnType = VarType::VOID_TYPE;
     function->body->accept(this);
+    checkTypes(expectedReturnType, obtainedReturnType);
+    expectedReturnType = VarType::UNKNOWN_TYPE;
     varEnv.removeLevel();
 }
 
@@ -141,7 +186,9 @@ void TypeVisitor::visit(AssignStatement* stm) {
         throw runtime_error(msg);
     }
     // eval rhs
+    lhsType = var.varType;
     VarType rhsType = getType(stm->rhs->accept(this));
+    lhsType = VarType::VOID_TYPE;
     checkTypes(var.varType, rhsType);
 }
 
@@ -164,14 +211,18 @@ void TypeVisitor::visit(AdvanceStatement* stm) {
         throw runtime_error(msg);
     }
     // eval rhs
+    lhsType = var.varType;
     VarType rhsType = getType(stm->rhs->accept(this));
+    lhsType = VarType::VOID_TYPE;
     checkTypes(var.varType, rhsType);
 }
 
 void TypeVisitor::visit(ReturnStatement* stm) {
-    VarType obtainedReturnType = VarType::VOID_TYPE;
+    obtainedReturnType = VarType::VOID_TYPE;
     if (stm->exp) {
+        awaitingReturn = true;
         obtainedReturnType = getType(stm->exp->accept(this));
+        awaitingReturn = false;
     }
     checkTypes(expectedReturnType, obtainedReturnType);
 }
@@ -209,10 +260,18 @@ void TypeVisitor::visit(ScopeStatement* stm) {
 
 // Exp
 IVisitorReturn* TypeVisitor::visit(BinaryExp* exp) {
+    if (
+        exp->op == LESS_OP || exp->op == LESS_EQ_OP ||
+        exp->op == GREATER_OP || exp->op == GREATER_EQ_OP ||
+        exp->op == EQUALS_OP || exp->op == NEQUALS_OP
+    ) {
+        checkingComparison = true;
+    }
     VarType type1 = getType(exp->left->accept(this));
     VarType type2 = getType(exp->right->accept(this));
+    checkingComparison = false;
     checkTypes(type1, type2);
-    // if comparison expression
+    // if comparison (but not equality) expression
     if (
         exp->op == LESS_OP || exp->op == LESS_EQ_OP ||
         exp->op == GREATER_OP || exp->op == GREATER_EQ_OP
@@ -221,6 +280,7 @@ IVisitorReturn* TypeVisitor::visit(BinaryExp* exp) {
             string msg = "Error: Se intento realizar una operación de comparación entre bools";
             throw runtime_error(msg);
         }
+        return new TypeReturn(VarType::BOOL_TYPE);
     }
     // if arithmetic binary expression
     else if (exp->op != EQUALS_OP && exp->op != NEQUALS_OP) {
@@ -228,11 +288,29 @@ IVisitorReturn* TypeVisitor::visit(BinaryExp* exp) {
             string msg = "Error: Se intento realizar una operación aritmética entre bools";
             throw runtime_error(msg);
         }
+        return new TypeReturn(type1);
     }
-    return new TypeReturn(type1);
+    // if equality comparison
+    else {
+        return new TypeReturn(VarType::BOOL_TYPE);
+    }
 }
 
 IVisitorReturn* TypeVisitor::visit(UnaryExp* exp) {
+    VarType _type;
+    if (awaitingReturn) {
+        _type = expectedReturnType;
+    }
+    else {
+        _type = lhsType;
+    }
+    // if trying to do a negative literal to an unsigned value,
+    // it may not be able to determine at runtime if this is valid,
+    // so this will just throw error in this case
+    if (exp->op == NEG_OP && (_type == VarType::UINT32_TYPE || _type == VarType::UINT64_TYPE)) {
+        string msg = "Error: Se intento asignar un valor negativo a una variable de tipo '" + varTypeToString(_type) + "'";
+        throw runtime_error(msg);
+    }
     VarType type = getType(exp->exp->accept(this));
     if (exp->op == NEG_OP && type == VarType::BOOL_TYPE) {
         string msg = "Error: Se intento realizar una operación aritmética a un bool";
@@ -246,6 +324,29 @@ IVisitorReturn* TypeVisitor::visit(UnaryExp* exp) {
 }
 
 IVisitorReturn* TypeVisitor::visit(IntegerExp* exp) {
+    if (checkingComparison) {
+        exp->isImplicit = false;
+        return new TypeReturn(exp->type);
+    }
+    if (lhsType == VarType::UNKNOWN_TYPE) {
+        exp->isImplicit = false;
+        return new TypeReturn(exp->type);
+    }
+    if (exp->isImplicit) {
+        bool castable;
+        if (!awaitingReturn) {
+            castable = tryImplicitCast(lhsType, exp);
+            if (!castable) {
+                checkTypes(lhsType, exp->type);
+            }
+        }
+        else {
+            castable = tryImplicitCast(expectedReturnType, exp);
+            if (!castable) {
+                checkTypes(expectedReturnType, exp->type);
+            }
+        }
+    }
     return new TypeReturn(exp->type);
 }
 
@@ -270,15 +371,13 @@ IVisitorReturn* TypeVisitor::visit(FunctionExp* exp) {
         string msg = "Error: La llamada a la función '" + exp->name + "' no recibió la cantidad correcta de parámetros";
         throw runtime_error(msg);
     }
-    std::list<VarType> expTypes;
-    for (auto it = exp->args.begin(); it != exp->args.end(); it++) {
-        auto type = getType((*it)->accept(this));
-        expTypes.push_back(type);
-    }
     auto it1 = fType.params.begin();
-    auto it2 = expTypes.begin();
-    for (;it1 != fType.params.end();) {
-        checkTypes(*it1, *it2);
+    auto it2 = exp->args.begin();
+    for (; it1 != fType.params.end(); ) {
+        lhsType = *it1;
+        auto type = getType((*it2)->accept(this));
+        lhsType = VarType::VOID_TYPE;
+        checkTypes(*it1, type);
         it1++; it2++;
     }
     return new TypeReturn(fType.returnType);

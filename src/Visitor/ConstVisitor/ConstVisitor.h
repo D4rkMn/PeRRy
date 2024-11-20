@@ -26,6 +26,7 @@ private:
     bool deleteConstDec = false;
     Exp* expParent = nullptr;
     ExpParentType parentType = ExpParentType::NONE;
+    bool lhsUnsigned = false;
 
     Environment<EnvVariable> varEnv;
     Environment<ConstVariant> constEnv;
