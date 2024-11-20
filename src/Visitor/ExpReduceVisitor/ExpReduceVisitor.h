@@ -10,7 +10,15 @@ class ExpReduceVisitor : public IVisitor {
 private:
     void replaceNode(Exp*&);
     IntegerExp* getNode(IVisitorReturn*) const;
-    IntegerExp* evalBinaryExp(IntegerExp*, IntegerExp*, BinaryOp) const;
+
+    template <typename T>
+    IntegerExp* evalBinaryExp(const T&, const T&, BinaryOp) const;
+    IntegerExp* evalBinaryExp_b(const bool&, const bool&, BinaryOp) const;
+
+    template <typename T>
+    IntegerExp* evalUnaryExp(const T&, UnaryOp) const;
+    IntegerExp* evalUnaryExp_b(const bool&, UnaryOp) const;
+
 public:
     void reduce(Program*);
     // Program
@@ -30,6 +38,7 @@ public:
     void visit(ReturnStatement*) override;
     void visit(PrintStatement*) override;
     void visit(IfStatement*) override;
+    void visit(WhileStatement*) override;
     void visit(ForStatement*) override;
     void visit(UnsafeStatement*) override;
     void visit(ScopeStatement*) override;
@@ -37,9 +46,10 @@ public:
     IVisitorReturn* visit(BinaryExp*) override;
     IVisitorReturn* visit(UnaryExp*) override;
     IVisitorReturn* visit(IntegerExp*) override;
-    IVisitorReturn* visit(BoolExp*) override;
     IVisitorReturn* visit(IdentifierExp*) override;
     IVisitorReturn* visit(FunctionExp*) override;
 };
+
+#include "Visitor/ExpReduceVisitor/ExpReduceVisitor.tpp"
 
 #endif

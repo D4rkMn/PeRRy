@@ -18,6 +18,7 @@ private:
     enum class ExpParentType {
         NONE,
         BINARY_EXP,
+        UNARY_EXP,
         FUNCTION_EXP
     };
     bool fetchingForConst = false;
@@ -32,7 +33,12 @@ private:
     ConstVariant getValue(IVisitorReturn*) const;
 
     template <typename T>
-    IVisitorReturn* evalBinaryExp(T, T, BinaryOp) const;
+    IVisitorReturn* evalBinaryExp(const T&, const T&, BinaryOp) const;
+    IVisitorReturn* evalBinaryExp_b(const bool&, const bool&, BinaryOp) const;
+
+    template <typename T>
+    IVisitorReturn* evalUnaryExp(const T&, UnaryOp) const;
+    IVisitorReturn* evalUnaryExp_b(const bool&, UnaryOp) const;
     
     void replaceBinary(BinaryExp*, IdentifierExp*, const ConstVariant&);
     void replaceFunction(FunctionExp*, IdentifierExp*, const ConstVariant&);
@@ -57,6 +63,7 @@ public:
     void visit(ReturnStatement*) override;
     void visit(PrintStatement*) override;
     void visit(IfStatement*) override;
+    void visit(WhileStatement*) override;
     void visit(ForStatement*) override;
     void visit(UnsafeStatement*) override;
     void visit(ScopeStatement*) override;
@@ -64,7 +71,6 @@ public:
     IVisitorReturn* visit(BinaryExp*) override;
     IVisitorReturn* visit(UnaryExp*) override;
     IVisitorReturn* visit(IntegerExp*) override;
-    IVisitorReturn* visit(BoolExp*) override;
     IVisitorReturn* visit(IdentifierExp*) override;
     IVisitorReturn* visit(FunctionExp*) override;
 };

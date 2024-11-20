@@ -20,6 +20,7 @@ class AdvanceStatement;
 class ReturnStatement;
 class PrintStatement;
 class IfStatement;
+class WhileStatement;
 class ForStatement;
 class UnsafeStatement;
 class ScopeStatement;
@@ -27,7 +28,6 @@ class ScopeStatement;
 class BinaryExp;
 class UnaryExp;
 class IntegerExp;
-class BoolExp;
 class IdentifierExp;
 class FunctionExp;
 
@@ -50,6 +50,7 @@ public:
     virtual void visit(ReturnStatement*) = 0;
     virtual void visit(PrintStatement*) = 0;
     virtual void visit(IfStatement*) = 0;
+    virtual void visit(WhileStatement*) = 0;
     virtual void visit(ForStatement*) = 0;
     virtual void visit(UnsafeStatement*) = 0;
     virtual void visit(ScopeStatement*) = 0;
@@ -57,7 +58,6 @@ public:
     virtual IVisitorReturn* visit(BinaryExp*) = 0;
     virtual IVisitorReturn* visit(UnaryExp*) = 0;
     virtual IVisitorReturn* visit(IntegerExp*) = 0;
-    virtual IVisitorReturn* visit(BoolExp*) = 0;
     virtual IVisitorReturn* visit(IdentifierExp*) = 0;
     virtual IVisitorReturn* visit(FunctionExp*) = 0;
 };

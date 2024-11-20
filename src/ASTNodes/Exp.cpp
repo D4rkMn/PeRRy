@@ -102,9 +102,10 @@ IntegerExp::IntegerExp(uint64_t v) {
     value = uint64_t(v);
 }
 
-// BoolExp
-
-BoolExp::BoolExp(bool value) : value(value) {}
+IntegerExp::IntegerExp(bool v) {
+    type = VarType::BOOL_TYPE;
+    value = bool(v);
+}
 
 // IdentifierExp
 

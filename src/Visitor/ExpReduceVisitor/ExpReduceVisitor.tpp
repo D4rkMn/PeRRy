@@ -1,8 +1,9 @@
-#include "Visitor/ConstVisitor/ConstVisitor.h"
+#include "Visitor/ExpReduceVisitor/ExpReduceVisitor.h"
+#include <iostream>
 using namespace std;
 
 template <typename T>
-IVisitorReturn* ConstVisitor::evalBinaryExp(const T& v1, const T& v2, BinaryOp op) const {
+IntegerExp* ExpReduceVisitor::evalBinaryExp(const T& v1, const T& v2, BinaryOp op) const {
     // eval expression
     T result;
     switch (op) {
@@ -23,11 +24,11 @@ IVisitorReturn* ConstVisitor::evalBinaryExp(const T& v1, const T& v2, BinaryOp o
             throw runtime_error(msg);
         }
     }
-    return new VariantReturn(result);
+    return new IntegerExp(T(result));
 }
 
 template <typename T>
-IVisitorReturn* ConstVisitor::evalUnaryExp(const T& v, UnaryOp op) const {
+IntegerExp* ExpReduceVisitor::evalUnaryExp(const T& v, UnaryOp op) const {
     // eval expression
     T result;
     switch (op) {
@@ -38,5 +39,5 @@ IVisitorReturn* ConstVisitor::evalUnaryExp(const T& v, UnaryOp op) const {
             throw runtime_error(msg);
         }
     }
-    return new VariantReturn(result);
+    return new IntegerExp(T(result));
 }

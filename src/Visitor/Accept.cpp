@@ -69,6 +69,10 @@ void IfStatement::accept(IVisitor* v) {
     v->visit(this);
 }
 
+void WhileStatement::accept(IVisitor* v) {
+    v->visit(this);
+}
+
 void ForStatement::accept(IVisitor* v) {
     v->visit(this);
 }
@@ -92,10 +96,6 @@ IVisitorReturn* UnaryExp::accept(IVisitor* v) {
 }
 
 IVisitorReturn* IntegerExp::accept(IVisitor* v) {
-    return v->visit(this);
-}
-
-IVisitorReturn* BoolExp::accept(IVisitor* v) {
     return v->visit(this);
 }
 

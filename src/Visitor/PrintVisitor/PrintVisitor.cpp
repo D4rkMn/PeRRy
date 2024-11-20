@@ -151,6 +151,16 @@ void PrintVisitor::visit(IfStatement* stm) {
     cout << "}";
 }
 
+void PrintVisitor::visit(WhileStatement* stm) {
+    printIndent();
+    cout << "while ";
+    stm->condition->accept(this);
+    cout << " {\n";
+    stm->body->accept(this);
+    printIndent();
+    cout << "}";
+}
+
 void PrintVisitor::visit(ForStatement* stm) {
     printIndent();
     cout << "for " << stm->id << " in ";
@@ -200,21 +210,12 @@ IVisitorReturn* PrintVisitor::visit(IntegerExp* exp) {
         case VarType::INT64_TYPE: cout << get<int64_t>(exp->value); break;
         case VarType::UINT32_TYPE: cout << get<uint32_t>(exp->value); break;
         case VarType::UINT64_TYPE: cout << get<uint64_t>(exp->value); break;
+        case VarType::BOOL_TYPE: cout << boolalpha << get<bool>(exp->value); break;
         default: {
-            if (holds_alternative<int32_t>(exp->value)) {
-                cout << get<int32_t>(exp->value);
-            }
-            else {
-                cout << "This message should not appear.";
-            }
+            cout << "This message should not appear.";
             break;
         }
     }
-    return nullptr;
-}
-
-IVisitorReturn* PrintVisitor::visit(BoolExp* exp) {
-    cout << boolalpha << exp->value;
     return nullptr;
 }
 

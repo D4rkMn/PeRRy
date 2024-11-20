@@ -68,6 +68,15 @@ public:
     void accept(IVisitor*) override;
 };
 
+class WhileStatement : public Stm {
+public:
+    Exp* condition;
+    Body* body;
+    WhileStatement(Exp*, Body*);
+    ~WhileStatement();
+    void accept(IVisitor*) override;
+};
+
 class ForStatement : public Stm {
 public:
     std::string id;

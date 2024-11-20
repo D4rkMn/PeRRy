@@ -46,6 +46,16 @@ IfStatement::~IfStatement() {
     if (elseBody) delete elseBody; 
 }
 
+// WhileStatement
+
+WhileStatement::WhileStatement(Exp* exp, Body* body)
+    : condition(exp), body(body) {}
+
+WhileStatement::~WhileStatement() {
+    delete condition;
+    delete body;
+}
+
 // ForStatement
 
 ForStatement::ForStatement(const string& id, Exp* start, Exp* end, Body* body)

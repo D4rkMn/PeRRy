@@ -222,6 +222,18 @@ Stm* Parser::parseStatement() {
         }
         return new IfStatement(exp, ifBody, elseBody);
     }
+    // Parse while
+    if (match(Token::WHILE)) {
+        Exp* exp = parseCExpression();
+        if (!match(Token::LBRACKET)) {
+            throw SyntaxError("Se esperaba un '{'");
+        }
+        Body* body = parseBody();
+        if (!match(Token::RBRACKET)) {
+            throw SyntaxError("Se esperaba un '}'");
+        }
+        return new WhileStatement(exp, body);
+    }
     // Parse for
     if (match(Token::FOR)) {
         if (!match(Token::ID)) {
@@ -424,7 +436,7 @@ Exp* Parser::parseFactor() {
             backtrack();
             throw SyntaxError("Se esperaba un identificador o un número");
         }
-        return new BoolExp(previous->type == Token::TRUE);
+        return new IntegerExp(previous->type == Token::TRUE);
     }
     if (match(Token::LPAR)) {
         Exp* exp = parseCExpression();

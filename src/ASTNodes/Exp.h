@@ -49,7 +49,7 @@ public:
 
 class IntegerExp : public Exp {
 public:
-    std::variant<int32_t, int64_t, uint32_t, uint64_t> value;
+    std::variant<int32_t, int64_t, uint32_t, uint64_t, bool> value;
     VarType type;
     IntegerExp(const std::string&);
     IntegerExp(const std::string&, VarType);
@@ -57,15 +57,8 @@ public:
     IntegerExp(int64_t);
     IntegerExp(uint32_t);
     IntegerExp(uint64_t);
+    IntegerExp(bool);
     ~IntegerExp() {}
-    IVisitorReturn* accept(IVisitor*) override;
-};
-
-class BoolExp: public Exp {
-public:
-    bool value;
-    BoolExp(bool);
-    ~BoolExp() {}
     IVisitorReturn* accept(IVisitor*) override;
 };
 

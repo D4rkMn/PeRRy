@@ -185,6 +185,10 @@ void TypeVisitor::visit(IfStatement* stm) {
     if (stm->elseBody) stm->elseBody->accept(this);
 }
 
+void TypeVisitor::visit(WhileStatement* stm) {
+    stm->body->accept(this);
+}
+
 void TypeVisitor::visit(ForStatement* stm) {
     varEnv.addLevel();
     varEnv.addVariable(stm->id, EnvVariable());
@@ -243,10 +247,6 @@ IVisitorReturn* TypeVisitor::visit(UnaryExp* exp) {
 
 IVisitorReturn* TypeVisitor::visit(IntegerExp* exp) {
     return new TypeReturn(exp->type);
-}
-
-IVisitorReturn* TypeVisitor::visit(BoolExp* exp) {
-    return new TypeReturn(VarType::BOOL_TYPE);
 }
 
 IVisitorReturn* TypeVisitor::visit(IdentifierExp* exp) {

@@ -5,7 +5,7 @@ const d: u64 = 4u64;
 const e: bool = false;
 
 fn main() {
-    let mut x: i32 = -6;
+    let mut x: i32 = -6+1;
     let mut y: i32 = -7;
     let mut z: i32;
 

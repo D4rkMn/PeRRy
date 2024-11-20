@@ -7,6 +7,35 @@
 #include "ASTNodes/Exp.h"
 using namespace std;
 
+IVisitorReturn* ConstVisitor::evalBinaryExp_b(const bool& v1, const bool& v2, BinaryOp op) const {
+    // eval expression
+    bool result;
+    switch (op) {
+        // Boolean operators
+        case EQUALS_OP: result = (v1 == v2); break;
+        case NEQUALS_OP: result = (v1 != v2); break;
+        default: {
+            string msg = "Error: Operacion binaria incompatible para bool";
+            throw runtime_error(msg);
+        }
+    }
+    return new VariantReturn(result);
+}
+
+IVisitorReturn* ConstVisitor::evalUnaryExp_b(const bool& v, UnaryOp op) const {
+    // eval expression
+    bool result;
+    switch (op) {
+        // Boolean operators
+        case NOT_OP: result = !v; break;
+        default: {
+            string msg = "Error: Operacion unaria incompatible para bool";
+            throw runtime_error(msg);
+        }
+    }
+    return new VariantReturn(result);
+}
+
 ConstVariant ConstVisitor::getValue(IVisitorReturn* ret) const {
     ConstVariant value = dynamic_cast<VariantReturn*>(ret)->value;
     if (ret) delete ret;
@@ -16,7 +45,7 @@ ConstVariant ConstVisitor::getValue(IVisitorReturn* ret) const {
 void ConstVisitor::replaceASTNode(Exp*& exp, const ConstVariant& value) {
     delete exp;
     if (holds_alternative<bool>(value)) {
-        exp = new BoolExp(get<bool>(value));
+        exp = new IntegerExp(get<bool>(value));
     }
     else if (holds_alternative<int32_t>(value)) {
         exp = new IntegerExp(get<int32_t>(value));
@@ -203,6 +232,18 @@ void ConstVisitor::visit(IfStatement* stm) {
     if (stm->elseBody) stm->elseBody->accept(this);
 }
 
+void ConstVisitor::visit(WhileStatement* stm) {
+    auto e = stm->condition->accept(this);
+    if (e) {
+        ConstVariant value = getValue(e);
+        if (replacingRootExp) {
+            replaceASTNode(stm->condition, value);
+            replacingRootExp = false;
+        }
+    }
+    stm->body->accept(this);
+}
+
 void ConstVisitor::visit(ForStatement* stm) {
     auto e = stm->start->accept(this);
     if (!e) return;
@@ -258,6 +299,9 @@ IVisitorReturn* ConstVisitor::visit(BinaryExp* exp) {
         else if (holds_alternative<uint64_t>(v1)) {
             return evalBinaryExp<uint64_t>(get<uint64_t>(v1), get<uint64_t>(v2), exp->op);
         }
+        else if (holds_alternative<bool>(v1)) {
+            return evalBinaryExp_b(get<bool>(v1), get<bool>(v2), exp->op);
+        }
     }
 
     if (e1) delete e1;
@@ -266,7 +310,31 @@ IVisitorReturn* ConstVisitor::visit(BinaryExp* exp) {
 }
 
 IVisitorReturn* ConstVisitor::visit(UnaryExp* exp) {
-    
+    expParent = exp;
+    parentType = ExpParentType::UNARY_EXP;
+    auto e = exp->exp->accept(this);
+    expParent = nullptr;
+    parentType = ExpParentType::NONE;
+
+    if (e) {
+        auto v = getValue(e);
+        if (holds_alternative<int32_t>(v)) {
+            return evalUnaryExp<int32_t>(get<int32_t>(v), exp->op);
+        }
+        else if (holds_alternative<int64_t>(v)) {
+            return evalUnaryExp<int64_t>(get<int64_t>(v), exp->op);
+        }
+        else if (holds_alternative<uint32_t>(v)) {
+            return evalUnaryExp<uint32_t>(get<uint32_t>(v), exp->op);
+        }
+        else if (holds_alternative<uint64_t>(v)) {
+            return evalUnaryExp<uint64_t>(get<uint64_t>(v), exp->op);
+        }
+        else if (holds_alternative<bool>(v)) {
+            return evalUnaryExp_b(get<bool>(v), exp->op);
+        }
+    }
+    return nullptr;
 }
 
 IVisitorReturn* ConstVisitor::visit(IntegerExp* exp) {
@@ -275,15 +343,12 @@ IVisitorReturn* ConstVisitor::visit(IntegerExp* exp) {
         case VarType::INT64_TYPE: return new VariantReturn(get<int64_t>(exp->value)); break;
         case VarType::UINT32_TYPE: return new VariantReturn(get<uint32_t>(exp->value)); break;
         case VarType::UINT64_TYPE: return new VariantReturn(get<uint64_t>(exp->value)); break;
+        case VarType::BOOL_TYPE: return new VariantReturn(get<bool>(exp->value)); break;
         default: {
             string msg = "Error: Tipo desconocido - '" + varTypeToString(exp->type) + "'";
             throw runtime_error(msg);
         }
     }
-}
-
-IVisitorReturn* ConstVisitor::visit(BoolExp* exp) {
-    return new VariantReturn(exp->value);
 }
 
 IVisitorReturn* ConstVisitor::visit(IdentifierExp* exp) {

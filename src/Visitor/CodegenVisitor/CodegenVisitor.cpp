@@ -75,6 +75,10 @@ void CodegenVisitor::visit(IfStatement* stm) {
 
 }
 
+void CodegenVisitor::visit(WhileStatement* stm) {
+
+}
+
 void CodegenVisitor::visit(ForStatement* stm) {
 
 }
@@ -98,10 +102,6 @@ IVisitorReturn* CodegenVisitor::visit(UnaryExp* exp) {
 }
 
 IVisitorReturn* CodegenVisitor::visit(IntegerExp* exp) {
-
-}
-
-IVisitorReturn* CodegenVisitor::visit(BoolExp* exp) {
 
 }
 

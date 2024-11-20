@@ -26,6 +26,7 @@ public:
     void visit(ReturnStatement*) override;
     void visit(PrintStatement*) override;
     void visit(IfStatement*) override;
+    void visit(WhileStatement*) override;
     void visit(ForStatement*) override;
     void visit(UnsafeStatement*) override;
     void visit(ScopeStatement*) override;
@@ -33,7 +34,6 @@ public:
     IVisitorReturn* visit(BinaryExp*) override;
     IVisitorReturn* visit(UnaryExp*) override;
     IVisitorReturn* visit(IntegerExp*) override;
-    IVisitorReturn* visit(BoolExp*) override;
     IVisitorReturn* visit(IdentifierExp*) override;
     IVisitorReturn* visit(FunctionExp*) override;
 };

@@ -8,6 +8,35 @@
 #include "ASTNodes/Exp.h"
 using namespace std;
 
+IntegerExp* ExpReduceVisitor::evalBinaryExp_b(const bool& v1, const bool& v2, BinaryOp op) const {
+    // eval expression
+    bool result;
+    switch (op) {
+        // Boolean operators
+        case EQUALS_OP: result = (v1 == v2); break;
+        case NEQUALS_OP: result = (v1 != v2); break;
+        default: {
+            string msg = "Error: Operacion binaria incompatible para bool";
+            throw runtime_error(msg);
+        }
+    }
+    return new IntegerExp(bool(result));
+}
+
+IntegerExp* ExpReduceVisitor::evalUnaryExp_b(const bool& v, UnaryOp op) const {
+    // eval expression
+    bool result;
+    switch (op) {
+        // Boolean operators
+        case NOT_OP: result = !v; break;
+        default: {
+            string msg = "Error: Operacion unaria incompatible para bool";
+            throw runtime_error(msg);
+        }
+    }
+    return new IntegerExp(bool(result));
+}
+
 void ExpReduceVisitor::replaceNode(Exp*& e) {
     IntegerExp* exp = getNode(e->accept(this));
     if (!exp) return;
@@ -19,33 +48,6 @@ IntegerExp* ExpReduceVisitor::getNode(IVisitorReturn* ret) const {
     IntegerExp* e = dynamic_cast<ReducedReturn*>(ret)->exp;
     delete ret;
     return e;
-}
-
-IntegerExp* ExpReduceVisitor::evalBinaryExp(IntegerExp* e1, IntegerExp* e2, BinaryOp op) const {
-    auto v1 = get<int32_t>(e1->value);
-    auto v2 = get<int32_t>(e2->value);
-    // eval expression
-    uint64_t result;
-    switch (op) {
-        // Arithmetic operators
-        case PLUS_OP: result = v1 + v2; break;
-        case MINUS_OP: result = v1 - v2; break;
-        case MUL_OP: result = v1 * v2; break;
-        case DIV_OP: result = v1 / v2; break;
-        // Boolean operators
-        case LESS_OP: result = (v1 < v2); break;
-        case LESS_EQ_OP: result = (v1 <= v2); break;
-        case EQUALS_OP: result = (v1 == v2); break;
-        case GREATER_OP: result = (v1 > v2); break;
-        case GREATER_EQ_OP: result = (v1 >= v2); break;
-        case NEQUALS_OP: result = (v1 != v2); break;
-        default: {
-            string msg = "Error: Operacion binaria desconocida";
-            throw runtime_error(msg);
-        }
-    }
-    // TODO:
-    return new IntegerExp(to_string(result));
 }
 
 void ExpReduceVisitor::reduce(Program* program) {
@@ -126,6 +128,11 @@ void ExpReduceVisitor::visit(IfStatement* stm) {
     if (stm->elseBody) stm->elseBody->accept(this);
 }
 
+void ExpReduceVisitor::visit(WhileStatement* stm) {
+    replaceNode(stm->condition);
+    stm->body->accept(this);
+}
+
 void ExpReduceVisitor::visit(ForStatement* stm) {
     replaceNode(stm->start);
     replaceNode(stm->end);
@@ -152,7 +159,24 @@ IVisitorReturn* ExpReduceVisitor::visit(BinaryExp* exp) {
         exp->right = right;
     }
     if (left && right) {
-        IntegerExp* node = evalBinaryExp(left, right, exp->op);
+        IntegerExp* node;
+        auto v1 = left->value;
+        auto v2 = right->value;
+        if (holds_alternative<int32_t>(v1)) {
+            node = evalBinaryExp<int32_t>(get<int32_t>(v1), get<int32_t>(v2), exp->op);
+        }
+        else if (holds_alternative<int64_t>(v1)) {
+            node = evalBinaryExp<int64_t>(get<int64_t>(v1), get<int64_t>(v2), exp->op);
+        }
+        else if (holds_alternative<uint32_t>(v1)) {
+            node = evalBinaryExp<uint32_t>(get<uint32_t>(v1), get<uint32_t>(v2), exp->op);
+        }
+        else if (holds_alternative<uint64_t>(v1)) {
+            node = evalBinaryExp<uint64_t>(get<uint64_t>(v1), get<uint64_t>(v2), exp->op);
+        }
+        else if (holds_alternative<bool>(v1)) {
+            node = evalBinaryExp_b(get<bool>(v1), get<bool>(v2), exp->op);
+        }
         exp->left = exp->right = nullptr;
         delete left;
         delete right;
@@ -162,15 +186,34 @@ IVisitorReturn* ExpReduceVisitor::visit(BinaryExp* exp) {
 }
 
 IVisitorReturn* ExpReduceVisitor::visit(UnaryExp* exp) {
-    
+    IntegerExp* e = getNode(exp->exp->accept(this));
+    if (e) {
+        auto v = e->value;
+        IntegerExp* node;
+        if (holds_alternative<int32_t>(v)) {
+            node = evalUnaryExp<int32_t>(get<int32_t>(v), exp->op);
+        }
+        else if (holds_alternative<int64_t>(v)) {
+            node = evalUnaryExp<int64_t>(get<int64_t>(v), exp->op);
+        }
+        else if (holds_alternative<uint32_t>(v)) {
+            node = evalUnaryExp<uint32_t>(get<uint32_t>(v), exp->op);
+        }
+        else if (holds_alternative<uint64_t>(v)) {
+            node = evalUnaryExp<uint64_t>(get<uint64_t>(v), exp->op);
+        }
+        else if (holds_alternative<bool>(v)) {
+            node = evalUnaryExp_b(get<bool>(v), exp->op);
+        }
+        exp->exp = nullptr;
+        delete e;
+        return new ReducedReturn(node);
+    }
+    return new ReducedReturn(nullptr);
 }
 
 IVisitorReturn* ExpReduceVisitor::visit(IntegerExp* exp) {
     return new ReducedReturn(exp);
-}
-
-IVisitorReturn* ExpReduceVisitor::visit(BoolExp* exp) {
-    return new ReducedReturn(nullptr);
 }
 
 IVisitorReturn* ExpReduceVisitor::visit(IdentifierExp* exp) {
