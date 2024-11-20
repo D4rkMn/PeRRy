@@ -188,7 +188,26 @@ IVisitorReturn* PrintVisitor::visit(BinaryExp* exp) {
 }
 
 IVisitorReturn* PrintVisitor::visit(IntegerExp* exp) {
-    cout << exp->value;
+    switch (exp->type) {
+        case VarType::INT32_TYPE: cout << get<int32_t>(exp->value); break;
+        case VarType::INT64_TYPE: cout << get<int64_t>(exp->value); break;
+        case VarType::UINT32_TYPE: cout << get<uint32_t>(exp->value); break;
+        case VarType::UINT64_TYPE: cout << get<uint64_t>(exp->value); break;
+        default: {
+            if (holds_alternative<int32_t>(exp->value)) {
+                cout << get<int32_t>(exp->value);
+            }
+            else {
+                cout << "This message should not appear.";
+            }
+            break;
+        }
+    }
+    return nullptr;
+}
+
+IVisitorReturn* PrintVisitor::visit(BoolExp* exp) {
+    cout << boolalpha << exp->value;
     return nullptr;
 }
 

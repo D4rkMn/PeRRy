@@ -29,6 +29,7 @@ public:
     // Exp
     IVisitorReturn* visit(BinaryExp*) override;
     IVisitorReturn* visit(IntegerExp*) override;
+    IVisitorReturn* visit(BoolExp*) override;
     IVisitorReturn* visit(IdentifierExp*) override;
     IVisitorReturn* visit(FunctionExp*) override;
 };

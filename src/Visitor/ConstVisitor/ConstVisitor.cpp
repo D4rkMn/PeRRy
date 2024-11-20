@@ -1,8 +1,11 @@
 #include <iostream>
 #include "Visitor/ConstVisitor/ConstVisitor.h"
+#include "Visitor/ConstVisitor/LLongReturn.h"
+
 #include "Visitor/ConstVisitor/Int32EnvConst.h"
 #include "Visitor/ConstVisitor/Int64EnvConst.h"
-#include "Visitor/ConstVisitor/LLongReturn.h"
+#include "Visitor/ConstVisitor/UInt32EnvConst.h"
+#include "Visitor/ConstVisitor/UInt64EnvConst.h"
 
 #include "ASTNodes/Program.h"
 #include "ASTNodes/Function.h"
@@ -10,18 +13,19 @@
 #include "ASTNodes/Exp.h"
 using namespace std;
 
-long long ConstVisitor::getValue(IVisitorReturn* ret) const {
-    long long value = dynamic_cast<LLongReturn*>(ret)->value;
+uint64_t ConstVisitor::getValue(IVisitorReturn* ret) const {
+    uint64_t value = dynamic_cast<LLongReturn*>(ret)->value;
     if (ret) delete ret;
     return value;
 }
 
-void ConstVisitor::replaceASTNode(Exp*& exp, long long value) {
+void ConstVisitor::replaceASTNode(Exp*& exp, uint64_t value) {
     delete exp;
-    exp = new IntegerExp(value);
+    // TODO:
+    exp = new IntegerExp(to_string(value));
 }
 
-long long ConstVisitor::envConstToLLong(IEnvConst* envConst) const {
+uint64_t ConstVisitor::envConstToLLong(IEnvConst* envConst) const {
     switch (envConst->getType()) {
         case VarType::INT32_TYPE: {
             auto _envconst = dynamic_cast<Int32EnvConst*>(envConst);
@@ -40,9 +44,9 @@ long long ConstVisitor::envConstToLLong(IEnvConst* envConst) const {
     }
 }
 
-IVisitorReturn* ConstVisitor::evalBinaryExp(long long v1, long long v2, BinaryOp op) const {
+IVisitorReturn* ConstVisitor::evalBinaryExp(uint64_t v1, uint64_t v2, BinaryOp op) const {
     // eval expression
-    long long result;
+    uint64_t result;
     switch (op) {
         // Arithmetic operators
         case PLUS_OP: result = v1 + v2; break;
@@ -112,7 +116,7 @@ void ConstVisitor::visit(LetVar* vardec) {
     }
     auto e = vardec->exp->accept(this);
     if (!e) return;
-    long long value = getValue(e);
+    uint64_t value = getValue(e);
     if (replacingRootExp) {
         replaceASTNode(vardec->exp, value);
         replacingRootExp = false;
@@ -123,7 +127,7 @@ void ConstVisitor::visit(StaticVar* vardec) {
     varEnv.addVariable(vardec->id, {EnvVariable::STATIC_VAR, vardec->type, vardec->mut});
     auto e = vardec->exp->accept(this);
     if (!e) return;
-    long long value = getValue(e);
+    uint64_t value = getValue(e);
     if (replacingRootExp) {
         replaceASTNode(vardec->exp, value);
         replacingRootExp = false;
@@ -135,7 +139,7 @@ void ConstVisitor::visit(ConstVar* vardec) {
     fetchingForConst = true;
     auto e = vardec->exp->accept(this);
     fetchingForConst = false;
-    long long value = getValue(e);
+    uint64_t value = getValue(e);
     if (replacingRootExp) {
         replaceASTNode(vardec->exp, value);
         replacingRootExp = false;
@@ -144,6 +148,8 @@ void ConstVisitor::visit(ConstVar* vardec) {
     switch (vardec->type) {
         case VarType::INT32_TYPE: constType = new Int32EnvConst(value); break;
         case VarType::INT64_TYPE: constType = new Int64EnvConst(value); break;
+        case VarType::UINT32_TYPE: constType = new UInt32EnvConst(value); break;
+        case VarType::UINT64_TYPE: constType = new UInt64EnvConst(value); break;
         default: {
             string msg = "Error: Tipo desconocido - '" + varTypeToString(vardec->type) + "'";
             throw runtime_error(msg);
@@ -177,7 +183,7 @@ void ConstVisitor::visit(ParamDec* param) {
 void ConstVisitor::visit(ExpStatement* stm) {
     auto e = stm->exp->accept(this);
     if (!e) return;
-    long long value = getValue(e);
+    uint64_t value = getValue(e);
     if (replacingRootExp) {
         replaceASTNode(stm->exp, value);
         replacingRootExp = false;
@@ -187,7 +193,7 @@ void ConstVisitor::visit(ExpStatement* stm) {
 void ConstVisitor::visit(AssignStatement* stm) {
     auto e = stm->rhs->accept(this);
     if (!e) return;
-    long long value = getValue(e);
+    uint64_t value = getValue(e);
     if (replacingRootExp) {
         replaceASTNode(stm->rhs, value);
         replacingRootExp = false;
@@ -197,7 +203,7 @@ void ConstVisitor::visit(AssignStatement* stm) {
 void ConstVisitor::visit(AdvanceStatement* stm) {
     auto e = stm->rhs->accept(this);
     if (!e) return;
-    long long value = getValue(e);
+    uint64_t value = getValue(e);
     if (replacingRootExp) {
         replaceASTNode(stm->rhs, value);
         replacingRootExp = false;
@@ -208,7 +214,7 @@ void ConstVisitor::visit(ReturnStatement* stm) {
     if (!stm->exp) return;
     auto e = stm->exp->accept(this);
     if (!e) return;
-    long long value = getValue(e);
+    uint64_t value = getValue(e);
     if (replacingRootExp) {
         replaceASTNode(stm->exp, value);
         replacingRootExp = false;
@@ -219,7 +225,7 @@ void ConstVisitor::visit(PrintStatement* stm) {
     for (auto it = stm->expList.begin(); it != stm->expList.end(); it++) {
         auto e = (*it)->accept(this);
         if (!e) continue;
-        long long value = getValue(e);
+        uint64_t value = getValue(e);
         if (replacingRootExp) {
             replaceASTNode(*it, value);
             replacingRootExp = false;
@@ -230,7 +236,7 @@ void ConstVisitor::visit(PrintStatement* stm) {
 void ConstVisitor::visit(IfStatement* stm) {
     auto e = stm->condition->accept(this);
     if (e) {
-        long long value = getValue(e);
+        uint64_t value = getValue(e);
         if (replacingRootExp) {
             replaceASTNode(stm->condition, value);
             replacingRootExp = false;
@@ -243,7 +249,7 @@ void ConstVisitor::visit(IfStatement* stm) {
 void ConstVisitor::visit(ForStatement* stm) {
     auto e = stm->start->accept(this);
     if (!e) return;
-    long long value = getValue(e);
+    uint64_t value = getValue(e);
     if (replacingRootExp) {
         replaceASTNode(stm->start, value);
         replacingRootExp = false;
@@ -292,14 +298,19 @@ IVisitorReturn* ConstVisitor::visit(BinaryExp* exp) {
 }
 
 IVisitorReturn* ConstVisitor::visit(IntegerExp* exp) {
+    auto v = get<int32_t>(exp->value);
     switch (exp->type) {
-        case VarType::INT32_TYPE: return new LLongReturn(exp->value); break;
-        case VarType::INT64_TYPE: return new LLongReturn(exp->value); break;
+        case VarType::INT32_TYPE: return new LLongReturn(v); break;
+        case VarType::INT64_TYPE: return new LLongReturn(v); break;
         default: {
             string msg = "Error: Tipo desconocido - '" + varTypeToString(exp->type) + "'";
             throw runtime_error(msg);
         }
     }
+}
+
+IVisitorReturn* ConstVisitor::visit(BoolExp* exp) {
+    return new LLongReturn(exp->value);
 }
 
 IVisitorReturn* ConstVisitor::visit(IdentifierExp* exp) {
@@ -316,7 +327,7 @@ IVisitorReturn* ConstVisitor::visit(IdentifierExp* exp) {
     }
     // get init value
     IEnvConst* value = constEnv.getVariableValue(exp->name).value();
-    long long llongValue = envConstToLLong(value);
+    uint64_t llongValue = envConstToLLong(value);
     // replace id ast node for int ast node
     if (expParent) {
         switch (parentType) {
@@ -347,7 +358,7 @@ IVisitorReturn* ConstVisitor::visit(FunctionExp* exp) {
     for (auto it = exp->args.begin(); it != exp->args.end(); it++) {
         auto e = (*it)->accept(this);
         if (!e) continue;
-        long long value = getValue(e);
+        uint64_t value = getValue(e);
         if (replacingRootExp) {
             replaceASTNode(*it, value);
             replacingRootExp = false;
@@ -356,7 +367,7 @@ IVisitorReturn* ConstVisitor::visit(FunctionExp* exp) {
     return nullptr;
 }
 
-void ConstVisitor::replaceBinary(BinaryExp* parent, IdentifierExp* child, long long value) {
+void ConstVisitor::replaceBinary(BinaryExp* parent, IdentifierExp* child, uint64_t value) {
     if (parent->left && parent->left == child) {
         replaceASTNode(parent->left, value);
         return;
@@ -369,7 +380,7 @@ void ConstVisitor::replaceBinary(BinaryExp* parent, IdentifierExp* child, long l
     throw runtime_error(msg);
 }
 
-void ConstVisitor::replaceFunction(FunctionExp* parent, IdentifierExp* child, long long value) {
+void ConstVisitor::replaceFunction(FunctionExp* parent, IdentifierExp* child, uint64_t value) {
     for (auto it = parent->args.begin(); it != parent->args.end(); it++) {
         if (*it != child) continue;
         replaceASTNode(*it, value);

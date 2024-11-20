@@ -400,7 +400,13 @@ Exp* Parser::parseFactor() {
         return function;
     }
     if (match(Token::INTEGER)) {
-        return new IntegerExp(stoll(previous->text), previous->varType);
+        if (previous->varType == VarType::UNKNOWN_TYPE) {
+            return new IntegerExp(previous->text);
+        }
+        return new IntegerExp(previous->text, previous->varType);
+    }
+    if (match(Token::TRUE) || match(Token::FALSE)) {
+        return new BoolExp(previous->type == Token::TRUE);
     }
     if (match(Token::LPAR)) {
         Exp* exp = parseCExpression();

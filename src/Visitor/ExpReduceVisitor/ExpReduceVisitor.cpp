@@ -22,10 +22,10 @@ IntegerExp* ExpReduceVisitor::getNode(IVisitorReturn* ret) const {
 }
 
 IntegerExp* ExpReduceVisitor::evalBinaryExp(IntegerExp* e1, IntegerExp* e2, BinaryOp op) const {
-    auto v1 = e1->value;
-    auto v2 = e2->value;
+    auto v1 = get<int32_t>(e1->value);
+    auto v2 = get<int32_t>(e2->value);
     // eval expression
-    long long result;
+    uint64_t result;
     switch (op) {
         // Arithmetic operators
         case PLUS_OP: result = v1 + v2; break;
@@ -44,7 +44,8 @@ IntegerExp* ExpReduceVisitor::evalBinaryExp(IntegerExp* e1, IntegerExp* e2, Bina
             throw runtime_error(msg);
         }
     }
-    return new IntegerExp(result);
+    // TODO:
+    return new IntegerExp(to_string(result));
 }
 
 void ExpReduceVisitor::reduce(Program* program) {

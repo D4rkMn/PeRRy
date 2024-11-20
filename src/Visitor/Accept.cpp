@@ -91,6 +91,10 @@ IVisitorReturn* IntegerExp::accept(IVisitor* v) {
     return v->visit(this);
 }
 
+IVisitorReturn* BoolExp::accept(IVisitor* v) {
+    return v->visit(this);
+}
+
 IVisitorReturn* IdentifierExp::accept(IVisitor* v) {
     return v->visit(this);
 }

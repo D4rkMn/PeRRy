@@ -30,12 +30,12 @@ private:
     Environment<EnvVariable> varEnv;
     HeapEnvironment<IEnvConst*> constEnv;
 
-    long long getValue(IVisitorReturn*) const;
-    long long envConstToLLong(IEnvConst*) const;
-    IVisitorReturn* evalBinaryExp(long long, long long, BinaryOp) const;
-    void replaceBinary(BinaryExp*, IdentifierExp*, long long);
-    void replaceFunction(FunctionExp*, IdentifierExp*, long long);
-    void replaceASTNode(Exp*&, long long);
+    uint64_t getValue(IVisitorReturn*) const;
+    uint64_t envConstToLLong(IEnvConst*) const;
+    IVisitorReturn* evalBinaryExp(uint64_t, uint64_t, BinaryOp) const;
+    void replaceBinary(BinaryExp*, IdentifierExp*, uint64_t);
+    void replaceFunction(FunctionExp*, IdentifierExp*, uint64_t);
+    void replaceASTNode(Exp*&, uint64_t);
 
 public:
     void replace(Program*);
@@ -62,6 +62,7 @@ public:
     // Exp
     IVisitorReturn* visit(BinaryExp*) override;
     IVisitorReturn* visit(IntegerExp*) override;
+    IVisitorReturn* visit(BoolExp*) override;
     IVisitorReturn* visit(IdentifierExp*) override;
     IVisitorReturn* visit(FunctionExp*) override;
 };

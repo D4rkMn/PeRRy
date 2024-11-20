@@ -13,8 +13,9 @@ private:
     Environment<EnvVariable> varEnv;
     Environment<FunctionType> functionEnv;
     VarType expectedReturnType = VarType::UNKNOWN_TYPE;
-    std::runtime_error TypeError(VarType, VarType);
     VarType getType(IVisitorReturn*) const;
+    std::runtime_error TypeError(VarType, VarType) const;
+    void checkTypes(VarType, VarType) const;
 public:
     void check(Program*);
     // Program
@@ -40,6 +41,7 @@ public:
     // Exp
     IVisitorReturn* visit(BinaryExp*) override;
     IVisitorReturn* visit(IntegerExp*) override;
+    IVisitorReturn* visit(BoolExp*) override;
     IVisitorReturn* visit(IdentifierExp*) override;
     IVisitorReturn* visit(FunctionExp*) override;
 };

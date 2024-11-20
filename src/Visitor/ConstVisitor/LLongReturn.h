@@ -6,8 +6,8 @@
 
 class LLongReturn : public IVisitorReturn {
 public:
-    long long value;
-    LLongReturn(long long value) : value(value) {}
+    uint64_t value;
+    LLongReturn(uint64_t value) : value(value) {}
     ~LLongReturn() = default;
     Type getType() const override { return LLONG_RETURN; }
 };

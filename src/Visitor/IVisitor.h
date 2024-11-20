@@ -26,6 +26,7 @@ class ScopeStatement;
 // Exp
 class BinaryExp;
 class IntegerExp;
+class BoolExp;
 class IdentifierExp;
 class FunctionExp;
 
@@ -54,6 +55,7 @@ public:
     // Exp
     virtual IVisitorReturn* visit(BinaryExp*) = 0;
     virtual IVisitorReturn* visit(IntegerExp*) = 0;
+    virtual IVisitorReturn* visit(BoolExp*) = 0;
     virtual IVisitorReturn* visit(IdentifierExp*) = 0;
     virtual IVisitorReturn* visit(FunctionExp*) = 0;
 };

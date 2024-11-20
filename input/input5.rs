@@ -1,7 +1,7 @@
 const xd: i32 = 10;
 
 fn main() {
-    let mut x = 1i32;
+    let mut x: i32 = 6;
     let mut y: i32 = xd;
     let mut z: i32;
 

@@ -7,6 +7,7 @@ public:
     enum Type {
         TYPE_RETURN,
         LLONG_RETURN,
+        VARIANT_RETURN,
         REDUCE_RETURN
     };
 

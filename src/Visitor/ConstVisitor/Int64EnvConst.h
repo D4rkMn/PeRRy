@@ -5,8 +5,8 @@
 
 class Int64EnvConst : public IEnvConst {
 public:
-    long long value;
-    Int64EnvConst(long long value) : value(value) {}
+    int64_t value;
+    Int64EnvConst(int64_t value) : value(value) {}
     ~Int64EnvConst() = default;
     VarType getType() const override { return VarType::INT64_TYPE; }
 };

@@ -8,8 +8,13 @@
 #include "ASTNodes/Exp.h"
 using namespace std;
 
-// TODO: make i32 convertible to i64 
-runtime_error TypeVisitor::TypeError(VarType expected, VarType obtained) {
+void TypeVisitor::checkTypes(VarType expected, VarType obtained) const {
+    if (expected != obtained) {
+        throw TypeError(expected, obtained);
+    }
+}
+
+runtime_error TypeVisitor::TypeError(VarType expected, VarType obtained) const {
     string msg = "Error: Se esperaba '" + varTypeToString(expected) + "', pero se obtuvo '" + varTypeToString(obtained) + "'";
     return runtime_error(msg);
 }
@@ -69,25 +74,19 @@ void TypeVisitor::visit(LetVar* vardec) {
         return;
     }
     VarType obtainedType = getType(vardec->exp->accept(this));
-    if (obtainedType != vardec->type) {
-        throw TypeError(vardec->type, obtainedType);
-    }
+    checkTypes(vardec->type, obtainedType);
     varEnv.addVariable(vardec->id, {EnvVariable::LET_VAR, vardec->type, vardec->mut});
 }
 
 void TypeVisitor::visit(StaticVar* vardec) {
     VarType obtainedType = getType(vardec->exp->accept(this));
-    if (obtainedType != vardec->type) {
-        throw TypeError(vardec->type, obtainedType);
-    }
+    checkTypes(vardec->type, obtainedType);
     varEnv.addVariable(vardec->id, {EnvVariable::STATIC_VAR, vardec->type, vardec->mut});
 }
 
 void TypeVisitor::visit(ConstVar* vardec) {
     VarType obtainedType = getType(vardec->exp->accept(this));
-    if (obtainedType != vardec->type) {
-        throw TypeError(vardec->type, obtainedType);
-    }
+    checkTypes(vardec->type, obtainedType);
     varEnv.addVariable(vardec->id, {EnvVariable::CONST_VAR, vardec->type, false});
 }
 
@@ -139,13 +138,11 @@ void TypeVisitor::visit(AssignStatement* stm) {
     bool isUnsafe = varEnv.checkVariableExists("unsafe");
     if (var.declType == EnvVariable::STATIC_VAR && !isUnsafe) {
         string msg = "Error: La variable estática '" + stm->id + "' no puede ser modificada en un ambiente no marcado como 'unsafe'";
-        throw runtime_error(msg);   
+        throw runtime_error(msg);
     }
     // eval rhs
     VarType rhsType = getType(stm->rhs->accept(this));
-    if (var.varType != rhsType) {
-        throw TypeError(var.varType, rhsType);
-    }
+    checkTypes(var.varType, rhsType);
 }
 
 void TypeVisitor::visit(AdvanceStatement* stm) {
@@ -168,9 +165,7 @@ void TypeVisitor::visit(AdvanceStatement* stm) {
     }
     // eval rhs
     VarType rhsType = getType(stm->rhs->accept(this));
-    if (var.varType != rhsType) {
-        throw TypeError(var.varType, rhsType);
-    }
+    checkTypes(var.varType, rhsType);
 }
 
 void TypeVisitor::visit(ReturnStatement* stm) {
@@ -178,9 +173,7 @@ void TypeVisitor::visit(ReturnStatement* stm) {
     if (stm->exp) {
         obtainedReturnType = getType(stm->exp->accept(this));
     }
-    if (obtainedReturnType != expectedReturnType) {
-        throw TypeError(expectedReturnType, obtainedReturnType);
-    }
+    checkTypes(expectedReturnType, obtainedReturnType);
 }
 
 void TypeVisitor::visit(PrintStatement* stm) {
@@ -214,15 +207,33 @@ void TypeVisitor::visit(ScopeStatement* stm) {
 IVisitorReturn* TypeVisitor::visit(BinaryExp* exp) {
     VarType type1 = getType(exp->left->accept(this));
     VarType type2 = getType(exp->right->accept(this));
-    if (type1 != type2) {
-        string msg = "Error: Los tipos '" + varTypeToString(type1) + "' y '" + varTypeToString(type2) + "' no coinciden";
-        throw runtime_error(msg);
+    checkTypes(type1, type2);
+    // if comparison expression
+    if (
+        exp->op == LESS_OP || exp->op == LESS_EQ_OP ||
+        exp->op == GREATER_OP || exp->op == GREATER_EQ_OP
+    ) {
+        if (type1 == VarType::BOOL_TYPE || type2 == VarType::BOOL_TYPE) {
+            string msg = "Error: Se intento realizar una operación de comparación entre bools";
+            throw runtime_error(msg);
+        }
+    }
+    // if arithmetic binary expression
+    else if (exp->op != EQUALS_OP && exp->op != NEQUALS_OP) {
+        if (type1 == VarType::BOOL_TYPE || type2 == VarType::BOOL_TYPE) {
+            string msg = "Error: Se intento realizar una operación aritmética entre bools";
+            throw runtime_error(msg);
+        }
     }
     return new TypeReturn(type1);
 }
 
 IVisitorReturn* TypeVisitor::visit(IntegerExp* exp) {
     return new TypeReturn(exp->type);
+}
+
+IVisitorReturn* TypeVisitor::visit(BoolExp* exp) {
+    return new TypeReturn(VarType::BOOL_TYPE);
 }
 
 IVisitorReturn* TypeVisitor::visit(IdentifierExp* exp) {
@@ -251,9 +262,11 @@ IVisitorReturn* TypeVisitor::visit(FunctionExp* exp) {
         auto type = getType((*it)->accept(this));
         expTypes.push_back(type);
     }
-    if (fType.params != expTypes) {
-        string msg = "Error: La llamada a la función '" + exp->name +"' recibió parámetros de tipos incorrectos";
-        throw runtime_error(msg);
+    auto it1 = fType.params.begin();
+    auto it2 = expTypes.begin();
+    for (;it1 != fType.params.end();) {
+        checkTypes(*it1, *it2);
+        it1++; it2++;
     }
     return new TypeReturn(fType.returnType);
 }
