@@ -161,8 +161,16 @@ IVisitorReturn* ExpReduceVisitor::visit(BinaryExp* exp) {
     return new ReducedReturn(nullptr);
 }
 
+IVisitorReturn* ExpReduceVisitor::visit(UnaryExp* exp) {
+    
+}
+
 IVisitorReturn* ExpReduceVisitor::visit(IntegerExp* exp) {
     return new ReducedReturn(exp);
+}
+
+IVisitorReturn* ExpReduceVisitor::visit(BoolExp* exp) {
+    return new ReducedReturn(nullptr);
 }
 
 IVisitorReturn* ExpReduceVisitor::visit(IdentifierExp* exp) {

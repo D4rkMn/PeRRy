@@ -28,6 +28,7 @@ public:
     void visit(ScopeStatement*) override;
     // Exp
     IVisitorReturn* visit(BinaryExp*) override;
+    IVisitorReturn* visit(UnaryExp*) override;
     IVisitorReturn* visit(IntegerExp*) override;
     IVisitorReturn* visit(BoolExp*) override;
     IVisitorReturn* visit(IdentifierExp*) override;

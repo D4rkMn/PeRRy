@@ -16,11 +16,17 @@ enum BinaryOp {
     GREATER_OP, GREATER_EQ_OP, NEQUALS_OP // Boolean operators
 };
 
+enum UnaryOp {
+    NEG_OP, // Arithmetic operators
+    NOT_OP // Boolean operators
+};
+
 class Exp {
 public:
     virtual IVisitorReturn* accept(IVisitor* visitor) = 0;
     virtual ~Exp() {}
     static std::string binopToString(BinaryOp op);
+    static std::string unopToString(UnaryOp op);
 };
 
 class BinaryExp : public Exp {
@@ -32,12 +38,25 @@ public:
     IVisitorReturn* accept(IVisitor*) override;
 };
 
+class UnaryExp : public Exp {
+public:
+    Exp* exp;
+    UnaryOp op;
+    UnaryExp(Exp*, UnaryOp);
+    ~UnaryExp();
+    IVisitorReturn* accept(IVisitor*) override;
+};
+
 class IntegerExp : public Exp {
 public:
     std::variant<int32_t, int64_t, uint32_t, uint64_t> value;
     VarType type;
     IntegerExp(const std::string&);
     IntegerExp(const std::string&, VarType);
+    IntegerExp(int32_t);
+    IntegerExp(int64_t);
+    IntegerExp(uint32_t);
+    IntegerExp(uint64_t);
     ~IntegerExp() {}
     IVisitorReturn* accept(IVisitor*) override;
 };

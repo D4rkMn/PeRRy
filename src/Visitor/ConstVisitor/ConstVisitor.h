@@ -3,8 +3,7 @@
 
 #include "Visitor/IVisitor.h"
 #include "Environment/Environment.h"
-#include "Environment/HeapEnvironment.h"
-#include "Visitor/ConstVisitor/IEnvConst.h"
+#include "Visitor/ConstVisitor/VariantReturn.h"
 #include "Utility/EnvVariable.h"
 #include "ASTNodes/Exp.h"
 
@@ -28,14 +27,16 @@ private:
     ExpParentType parentType = ExpParentType::NONE;
 
     Environment<EnvVariable> varEnv;
-    HeapEnvironment<IEnvConst*> constEnv;
+    Environment<ConstVariant> constEnv;
 
-    uint64_t getValue(IVisitorReturn*) const;
-    uint64_t envConstToLLong(IEnvConst*) const;
-    IVisitorReturn* evalBinaryExp(uint64_t, uint64_t, BinaryOp) const;
-    void replaceBinary(BinaryExp*, IdentifierExp*, uint64_t);
-    void replaceFunction(FunctionExp*, IdentifierExp*, uint64_t);
-    void replaceASTNode(Exp*&, uint64_t);
+    ConstVariant getValue(IVisitorReturn*) const;
+
+    template <typename T>
+    IVisitorReturn* evalBinaryExp(T, T, BinaryOp) const;
+    
+    void replaceBinary(BinaryExp*, IdentifierExp*, const ConstVariant&);
+    void replaceFunction(FunctionExp*, IdentifierExp*, const ConstVariant&);
+    void replaceASTNode(Exp*&, const ConstVariant&);
 
 public:
     void replace(Program*);
@@ -61,10 +62,13 @@ public:
     void visit(ScopeStatement*) override;
     // Exp
     IVisitorReturn* visit(BinaryExp*) override;
+    IVisitorReturn* visit(UnaryExp*) override;
     IVisitorReturn* visit(IntegerExp*) override;
     IVisitorReturn* visit(BoolExp*) override;
     IVisitorReturn* visit(IdentifierExp*) override;
     IVisitorReturn* visit(FunctionExp*) override;
 };
+
+#include "Visitor/ConstVisitor/ConstVisitor.tpp"
 
 #endif

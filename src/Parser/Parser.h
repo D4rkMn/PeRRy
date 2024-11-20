@@ -25,6 +25,8 @@ private:
     Scanner* scanner;
     Token *current, *previous;
 
+    bool unary = false;
+
     bool advance();
     bool isAtEnd();
     void backtrack();

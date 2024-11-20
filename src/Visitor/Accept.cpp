@@ -87,6 +87,10 @@ IVisitorReturn* BinaryExp::accept(IVisitor* v) {
     return v->visit(this);
 }
 
+IVisitorReturn* UnaryExp::accept(IVisitor* v) {
+    return v->visit(this);
+}
+
 IVisitorReturn* IntegerExp::accept(IVisitor* v) {
     return v->visit(this);
 }

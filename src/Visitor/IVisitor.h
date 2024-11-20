@@ -25,6 +25,7 @@ class UnsafeStatement;
 class ScopeStatement;
 // Exp
 class BinaryExp;
+class UnaryExp;
 class IntegerExp;
 class BoolExp;
 class IdentifierExp;
@@ -54,6 +55,7 @@ public:
     virtual void visit(ScopeStatement*) = 0;
     // Exp
     virtual IVisitorReturn* visit(BinaryExp*) = 0;
+    virtual IVisitorReturn* visit(UnaryExp*) = 0;
     virtual IVisitorReturn* visit(IntegerExp*) = 0;
     virtual IVisitorReturn* visit(BoolExp*) = 0;
     virtual IVisitorReturn* visit(IdentifierExp*) = 0;

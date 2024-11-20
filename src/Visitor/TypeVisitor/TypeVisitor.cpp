@@ -228,6 +228,19 @@ IVisitorReturn* TypeVisitor::visit(BinaryExp* exp) {
     return new TypeReturn(type1);
 }
 
+IVisitorReturn* TypeVisitor::visit(UnaryExp* exp) {
+    VarType type = getType(exp->exp->accept(this));
+    if (exp->op == NEG_OP && type == VarType::BOOL_TYPE) {
+        string msg = "Error: Se intento realizar una operación aritmética a un bool";
+        throw runtime_error(msg);
+    }
+    if (exp->op == NOT_OP && type != VarType::BOOL_TYPE) {
+        string msg = "Error: Se intento realizar una lógica aritmética a un entero";
+        throw runtime_error(msg);    
+    }
+    return new TypeReturn(type);
+}
+
 IVisitorReturn* TypeVisitor::visit(IntegerExp* exp) {
     return new TypeReturn(exp->type);
 }

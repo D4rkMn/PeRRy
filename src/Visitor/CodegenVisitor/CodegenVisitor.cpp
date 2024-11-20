@@ -93,7 +93,15 @@ IVisitorReturn* CodegenVisitor::visit(BinaryExp* exp) {
 
 }
 
+IVisitorReturn* CodegenVisitor::visit(UnaryExp* exp) {
+
+}
+
 IVisitorReturn* CodegenVisitor::visit(IntegerExp* exp) {
+
+}
+
+IVisitorReturn* CodegenVisitor::visit(BoolExp* exp) {
 
 }
 

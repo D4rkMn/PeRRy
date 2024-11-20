@@ -405,7 +405,25 @@ Exp* Parser::parseFactor() {
         }
         return new IntegerExp(previous->text, previous->varType);
     }
+    if (match(Token::PLUS) || match(Token::MINUS)) {
+        if (unary) {
+            backtrack();
+            throw SyntaxError("Se esperaba un identificador o un número");
+        }
+        Token::Type type = previous->type;
+        unary = true;
+        Exp* e = parseFactor();
+        unary = false;
+        if (type == Token::MINUS) {
+            return new UnaryExp(e, NEG_OP);
+        }
+        return e;
+    }
     if (match(Token::TRUE) || match(Token::FALSE)) {
+        if (unary) {
+            backtrack();
+            throw SyntaxError("Se esperaba un identificador o un número");
+        }
         return new BoolExp(previous->type == Token::TRUE);
     }
     if (match(Token::LPAR)) {

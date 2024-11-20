@@ -180,10 +180,17 @@ void PrintVisitor::visit(ScopeStatement* stm) {
 }
 
 // Exp
+
 IVisitorReturn* PrintVisitor::visit(BinaryExp* exp) {
     exp->left->accept(this);
     cout << " " << Exp::binopToString(exp->op) << " ";
     exp->right->accept(this);
+    return nullptr;
+}
+
+IVisitorReturn* PrintVisitor::visit(UnaryExp* exp) {
+    cout << Exp::unopToString(exp->op);
+    exp->exp->accept(this);
     return nullptr;
 }
 
