@@ -16,37 +16,42 @@ void CodegenVisitor::generate(Program* program) {
 // Program
 
 void CodegenVisitor::visit(Program* program) {
-    
+    for (auto it = program->programList.begin(); it != program->programList.end(); it++) {
+        (*it)->accept(this);
+    }
 }
 
 void CodegenVisitor::visit(Body* body) {
-
+    for (auto it = body->bodyList.begin(); it != body->bodyList.end(); it++) {
+        (*it)->accept(this);
+    }
 }
 
 void CodegenVisitor::visit(LetVar* vardec) {
-
+    
 }
 
 void CodegenVisitor::visit(StaticVar* vardec) {
-
+    
 }
 
 void CodegenVisitor::visit(ConstVar* vardec) {
-
+    // nothing to output
 }
 
 // Function
 
+// TODO:
 void CodegenVisitor::visit(Function* function) {
-
+    function->body->accept(this);
 }
 
 void CodegenVisitor::visit(ParamDecList* params) {
-
+    // nothing to output
 }
 
 void CodegenVisitor::visit(ParamDec* param) {
-
+    // nothing to output
 }
 
 // Stm

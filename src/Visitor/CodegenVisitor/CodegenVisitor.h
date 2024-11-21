@@ -2,8 +2,11 @@
 #define CODEGENVISITOR_H
 
 #include "Visitor/IVisitor.h"
+#include <sstream>
 
 class CodegenVisitor : public IVisitor {
+private:
+    std::stringstream out;
 public:
     void generate(Program*);
     // Program

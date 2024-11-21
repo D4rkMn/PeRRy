@@ -24,7 +24,4 @@ fn main() {
     println!("{}", x);
     println!("{}", y);
     println!("{}", z);
-
-    let aaa: i32 = (1 == 2) + 5;
-    test(false);
 }

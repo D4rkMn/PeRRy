@@ -52,5 +52,8 @@ int main(int argc, const char* argv[]) {
     expReducer.reduce(program);
 
     printer.print(program);
+
+    CodegenVisitor codegen;
+    codegen.generate(program);
     return 0;
 }
