@@ -1,0 +1,32 @@
+MSTp
+CUP main
+STP
+ENT main
+MST
+LDA x
+LDCc 1
+STOc
+MST
+LDA i
+LDCc 0
+STOc
+L0
+LODc i
+LDCc 10
+LESc
+FJP L1
+MST
+LDA x
+LODc i
+INCc
+RET
+LDA i
+LDCc 1
+INCc
+UJP L0
+L1
+RET
+LODc x
+PRINT
+RET
+
