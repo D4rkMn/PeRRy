@@ -4,6 +4,8 @@ const c: i32 = 3;
 const d: u64 = 4u64;
 const e: bool = false;
 
+static test: i32 = 5 + 4;
+
 fn test(a: bool) -> bool {
     return a;
 }

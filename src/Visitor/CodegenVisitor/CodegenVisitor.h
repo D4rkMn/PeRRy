@@ -2,11 +2,17 @@
 #define CODEGENVISITOR_H
 
 #include "Visitor/IVisitor.h"
+#include "Environment/Environment.h"
+#include "Utility/VarType.h"
 #include <sstream>
 
 class CodegenVisitor : public IVisitor {
 private:
+    Environment<VarType> env;
+    uint64_t labels = 0;
+    std::string nextLabel();
     std::stringstream out;
+    bool isUnsigned = false;
 public:
     void generate(Program*);
     // Program
