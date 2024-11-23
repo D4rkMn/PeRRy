@@ -3,13 +3,19 @@
 #include "P/Parser/Parser.h"
 
 #include "P/Instruction/Instruction.h"
+#include "P/Instruction/Program.h"
 using namespace std;
 
-list<P::Instruction*> P::Parser::parseProgram() {
+P::Program* P::Parser::parseProgram() {
     if (isDebug) cout << "Iniciando Parser:\n";
-    list<Instruction*> program;
+    Program* program = new Program;
     while (!isAtEnd()) {
-        program.push_back(parseInstruction());
+        program->instructions.push_back(parseInstruction());
+        if (isJump) {
+            program->jumpTable[label] = pc;
+        }
+        isJump = false;
+        pc++;
     }
     if (isDebug) cout << "Parsing exitoso\n\n";
     return program;
@@ -32,6 +38,8 @@ P::Instruction* P::Parser::parseInstruction() {
         if (!match(Token::ID)) {
             throw SyntaxError("Se esperaba un identificador");
         }
+        isJump = true;
+        label = previous->text;
         return new EnterInstruction(previous->text);
     }
     if (match(Token::MSTp)) {
@@ -80,23 +88,35 @@ P::Instruction* P::Parser::parseInstruction() {
         return new StoreToVarInstruction(previous->text);
     }
     if (match(Token::LABEL)) {
-        return new LabelInstruction(stoll(previous->text));
+        isJump = true;
+        label = previous->text;
+        return new LabelInstruction(stoll(previous->text.substr(1, previous->text.size())));
     }
     if (match(Token::UJP)) {
-        return new JumpInstruction(true);
+        if (!match(Token::LABEL)) {
+            throw SyntaxError("Se esperaba un destino de salto");
+        }
+        return new JumpInstruction(true, previous->text);
     }
     if (match(Token::FJP)) {
-        return new JumpInstruction(false);
+        if (!match(Token::LABEL)) {
+            throw SyntaxError("Se esperaba un destino de salto");
+        }
+        return new JumpInstruction(false, previous->text);
     }
     if (
         match(Token::ADI) || match(Token::SBI) ||
         match(Token::MPI) || match(Token::DVI) ||
         match(Token::LESc) || match(Token::LEQc) ||
         match(Token::GRTc) || match(Token::GEQc) ||
-        match(Token::EQUc) || match(Token::NEQc) ||
-        match(Token::NGI) || match(Token::NOT)
+        match(Token::EQUc) || match(Token::NEQc)
     ) { 
-        return new OpInstruction(tokenToOp(*previous));
+        return new BinaryOpInstruction(tokenToOp(*previous));
+    }
+    if (
+        match(Token::NGI) || match(Token::NOT)
+    ) {
+        return new UnaryOpInstruction(tokenToOp(*previous));
     }
     if (match(Token::PRINT)) {
         return new PrintInstruction(false);

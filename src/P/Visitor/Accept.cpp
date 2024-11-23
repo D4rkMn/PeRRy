@@ -1,6 +1,11 @@
 #include "P/Namespace.h"
 #include "P/Instruction/Instruction.h"
+#include "P/Instruction/Program.h"
 #include "P/Visitor/IVisitor.h"
+
+void P::Program::accept(IVisitor* visitor) {
+    visitor->visit(this);
+}
 
 void P::PopInstruction::accept(IVisitor* visitor) {
     visitor->visit(this);
@@ -58,7 +63,11 @@ void P::JumpInstruction::accept(IVisitor* visitor) {
     visitor->visit(this);
 }
 
-void P::OpInstruction::accept(IVisitor* visitor) {
+void P::BinaryOpInstruction::accept(IVisitor* visitor) {
+    visitor->visit(this);
+}
+
+void P::UnaryOpInstruction::accept(IVisitor* visitor) {
     visitor->visit(this);
 }
 

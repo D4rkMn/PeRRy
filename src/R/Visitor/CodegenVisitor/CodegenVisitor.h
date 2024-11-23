@@ -9,6 +9,8 @@
 
 class R::CodegenVisitor : public IVisitor {
 private:
+    bool awaitingExpPop = false;
+    bool voidReturn = false;
     Environment<VarType> env;
     uint64_t labels = 0;
     std::string nextLabel();

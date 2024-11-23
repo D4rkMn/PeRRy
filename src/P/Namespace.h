@@ -5,7 +5,9 @@ namespace P {
     class Token;
     class Scanner;
     class Parser;
+    template <class T> class Environment;
     // Instructions
+    class Program;
     class Instruction;
     class PopInstruction;
     class StopInstruction;
@@ -21,10 +23,15 @@ namespace P {
     class StoreToVarInstruction;
     class LabelInstruction;
     class JumpInstruction;
-    class OpInstruction;
+    class BinaryOpInstruction;
+    class UnaryOpInstruction;
     class PrintInstruction;
     // Visitor
-    class IVisitor;   
+    class IVisitor;
+    class InstructionVisitor;
+    class IStackObject;   
+    class AddressObject;
+    class ValueObject;
 }
 
 #endif

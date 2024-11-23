@@ -83,6 +83,7 @@ void R::CodegenVisitor::visit(ConstVar* vardec) {
 void R::CodegenVisitor::visit(Function* function) {
     out << "ENT " << function->id << "\n";
     env.addLevel();
+    if (function->params) function->params->accept(this);
     function->body->accept(this);
     env.removeLevel();
     // RETn is for return nothing
@@ -104,19 +105,21 @@ void R::CodegenVisitor::visit(ParamDec* param) {
 // Stm
 
 void R::CodegenVisitor::visit(ExpStatement* stm) {
+    awaitingExpPop = true;
     stm->exp->accept(this);
-    out << "POP\n";
+    if (!voidReturn) {
+        out << "POP\n";
+    }
+    voidReturn = awaitingExpPop = false;
 }
 
 void R::CodegenVisitor::visit(AssignStatement* stm) {
-    VarType type = env.getVariableValue(stm->id).value();
     out << "LDA " << stm->id << "\n";
     stm->rhs->accept(this);
     out << "STOc\n";
 }
 
 void R::CodegenVisitor::visit(AdvanceStatement* stm) {
-    VarType type = env.getVariableValue(stm->id).value();
     out << "LDA " << stm->id << "\n";
     stm->rhs->accept(this);
     out << "INCc\n";
@@ -131,6 +134,7 @@ void R::CodegenVisitor::visit(ReturnStatement* stm) {
     else {
         // RETn is for return nothing
         out << "RETn\n";
+        if (awaitingExpPop) voidReturn = true;
     }
 }
 

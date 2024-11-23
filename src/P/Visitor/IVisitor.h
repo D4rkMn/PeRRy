@@ -5,7 +5,7 @@
 
 class P::IVisitor {
 public:
-    virtual ~IVisitor() = default;
+    virtual void visit(Program*) = 0;
     virtual void visit(PopInstruction*) = 0;
     virtual void visit(StopInstruction*) = 0;
     virtual void visit(EnterInstruction*) = 0;
@@ -20,7 +20,8 @@ public:
     virtual void visit(StoreToVarInstruction*) = 0;
     virtual void visit(LabelInstruction*) = 0;
     virtual void visit(JumpInstruction*) = 0;
-    virtual void visit(OpInstruction*) = 0;
+    virtual void visit(BinaryOpInstruction*) = 0;
+    virtual void visit(UnaryOpInstruction*) = 0;
     virtual void visit(PrintInstruction*) = 0;
 };
 

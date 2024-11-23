@@ -47,7 +47,7 @@ P::Token* P::Scanner::nextToken() {
         }
         // Edge case: Labels
         if (isLabel(word)) {
-            return new Token(Token::LABEL, word, 1, word.length(), line);
+            return new Token(Token::LABEL, word, 0, word.length(), line);
         }
         // Return identifier
         return new Token(Token::ID, word, 0, word.length(), line);

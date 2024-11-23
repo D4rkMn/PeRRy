@@ -13,6 +13,10 @@ private:
     Scanner* scanner = nullptr;
     Token *current, *previous;
 
+    uint64_t pc = 0;
+    std::string label = "";
+    bool isJump = false;
+
     bool advance();
     bool isAtEnd();
     bool match(Token::Type);
@@ -30,7 +34,7 @@ public:
     bool isDebug = true;
     void setScanner(Scanner* s);
     void resetScanner();
-    std::list<Instruction*> parseProgram();
+    Program* parseProgram();
 
 };
 

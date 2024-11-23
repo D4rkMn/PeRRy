@@ -5,6 +5,8 @@
 
 #include "P/Scanner/Scanner.h"
 #include "P/Parser/Parser.h"
+#include "P/Instruction/Program.h"
+#include "P/Visitor/InstructionVisitor/InstructionVisitor.h"
 using namespace std;
 
 int main(int argc, const char* argv[]) {
@@ -16,9 +18,14 @@ int main(int argc, const char* argv[]) {
     string file(argv[1]);
 
     string outputFile = "output/output.txt";
-    ifstream xd(outputFile);
+
+    R::Compiler compiler(true);
+    compiler.setInputFile(file);
+    compiler.setOutputFile(outputFile);
+    compiler.compile();
 
     // get input file's code
+    ifstream xd(outputFile);
     string code = "";
     string line = "";
     while (getline(xd, line)) {
@@ -32,14 +39,13 @@ int main(int argc, const char* argv[]) {
 
     P::Parser parser;
     parser.setScanner(&scanner);
-    parser.parseProgram();
+    P::Program* program = parser.parseProgram();
 
-    return 0;
+    for (auto it = program->jumpTable.begin(); it != program->jumpTable.end(); it++) {
+        cout << it->first << " : " << it->second << "\n";
+    } cout << "\n";
 
-    R::Compiler compiler(true);
-    compiler.setInputFile(file);
-    compiler.setOutputFile(outputFile);
-    compiler.compile();
-
+    P::InstructionVisitor interpreter;    
+    interpreter.interpret(program);
     return 0;
 }

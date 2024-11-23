@@ -1,6 +1,34 @@
 MSTp
 CUP main
 STP
+ENT factorial
+SROc n
+MST
+LODc n
+LDCc 0
+EQUc
+FJP L0
+MST
+LDCc 1
+RETv
+RET
+L0
+LODc n
+MSTp
+LODc n
+LDCc 1
+SBI
+CUP factorial
+MPI
+RETv
+RET
+RETn
+ENT test
+MST
+LDCc 1
+RETv
+RET
+RETn
 ENT main
 MST
 LDA x
@@ -22,11 +50,11 @@ MST
 LDA i
 LDCc 1
 STOc
-L0
+L1
 LODc i
 LDCc 5
 LESc
-FJP L1
+FJP L2
 MST
 LDCc 3
 PRINT
@@ -37,9 +65,13 @@ RET
 LDA i
 LDCc 1
 INCc
-UJP L0
-L1
+UJP L1
+L2
 RET
+LDA abc
+MSTp
+CUP test
+STOc
 LODc x
 PRINT
 PRINTLN

@@ -121,16 +121,25 @@ public:
 class P::JumpInstruction : public Instruction {
 public:
     bool unconditional;
-    JumpInstruction(bool unconditional) : unconditional(unconditional) {}
+    std::string label;
+    JumpInstruction(bool unconditional, const std::string& label) : unconditional(unconditional), label(label) {}
     ~JumpInstruction() = default;
     void accept(IVisitor*) override;
 };
 
-class P::OpInstruction : public Instruction {
+class P::BinaryOpInstruction : public Instruction {
 public:
     Op op;
-    OpInstruction(Op op) : op(op) {}
-    ~OpInstruction() = default;
+    BinaryOpInstruction(Op op) : op(op) {}
+    ~BinaryOpInstruction() = default;
+    void accept(IVisitor*) override;
+};
+
+class P::UnaryOpInstruction : public Instruction {
+public:
+    Op op;
+    UnaryOpInstruction(Op op) : op(op) {}
+    ~UnaryOpInstruction() = default;
     void accept(IVisitor*) override;
 };
 
