@@ -26,7 +26,7 @@ bool R::Scanner::isNewline(char c) const {
 void R::Scanner::reset() {
     first = 0;
     current = 0;
-    line = 0;
+    line = 1;
 }
 
 void R::Scanner::backtrack() {

@@ -2,7 +2,7 @@
 #include "R/Token/Token.h"
 using namespace std;
 
-R::Token::Type R::Token::wordToToken(const std::string& word) {
+R::Token::Type R::Token::wordToToken(const string& word) {
     // Variable declaration tokens
     if (word == "let") return LET;
     if (word == "const") return CONST;

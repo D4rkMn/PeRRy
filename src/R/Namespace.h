@@ -44,12 +44,14 @@ namespace R {
     class TypeVisitor;
     class ConstVisitor;
     class ExpReduceVisitor;
+    class CompileTimeVisitor;
     class CodegenVisitor;
     // Visitor returns
     class IVisitorReturn;
     class TypeReturn;
     class VariantReturn;
     class ReducedReturn;
+    class CompileTimeReturn;
     // Utility
     class EnvVariable;
     class FunctionType;

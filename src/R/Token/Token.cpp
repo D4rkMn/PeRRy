@@ -13,66 +13,66 @@ R::Token::Token(Type type, const string& source, int first, int last, size_t lin
 std::ostream& operator<<(std::ostream& outs, const R::Token& tok) {
     switch (tok.type) {
         // Variable declaration tokens
-        case R::Token::LET: cout << "TOKEN(LET)"; break;
-        case R::Token::CONST: cout << "TOKEN(CONST)"; break;
-        case R::Token::STATIC: cout << "TOKEN(STATIC)"; break;
-        case R::Token::MUT: cout << "TOKEN(MUT)"; break;
+        case R::Token::LET: outs << "TOKEN(LET)"; break;
+        case R::Token::CONST: outs << "TOKEN(CONST)"; break;
+        case R::Token::STATIC: outs << "TOKEN(STATIC)"; break;
+        case R::Token::MUT: outs << "TOKEN(MUT)"; break;
         // Type tokens
-        case R::Token::INT32: cout << "TOKEN(INT32)"; break;
-        case R::Token::INT64: cout << "TOKEN(INT64)"; break;
-        case R::Token::UINT32: cout << "TOKEN(UINT64)"; break;
-        case R::Token::UINT64: cout << "TOKEN(UINT64)"; break;
-        case R::Token::BOOL: cout << "TOKEN(BOOL)"; break;
+        case R::Token::INT32: outs << "TOKEN(INT32)"; break;
+        case R::Token::INT64: outs << "TOKEN(INT64)"; break;
+        case R::Token::UINT32: outs << "TOKEN(UINT64)"; break;
+        case R::Token::UINT64: outs << "TOKEN(UINT64)"; break;
+        case R::Token::BOOL: outs << "TOKEN(BOOL)"; break;
         // Arithmetic operators
-        case R::Token::PLUS: cout << "TOKEN(PLUS)"; break;
-        case R::Token::MINUS: cout << "TOKEN(MINUS)"; break;
-        case R::Token::MUL: cout << "TOKEN(MUL)"; break;
-        case R::Token::DIV: cout << "TOKEN(DIV)"; break;
+        case R::Token::PLUS: outs << "TOKEN(PLUS)"; break;
+        case R::Token::MINUS: outs << "TOKEN(MINUS)"; break;
+        case R::Token::MUL: outs << "TOKEN(MUL)"; break;
+        case R::Token::DIV: outs << "TOKEN(DIV)"; break;
         // Boolean comparisons
-        case R::Token::LESS: cout << "TOKEN(LESS)"; break;
-        case R::Token::LESS_EQ: cout << "TOKEN(LESS_EQ)"; break;
-        case R::Token::EQUALS: cout << "TOKEN(EQUALS)"; break;
-        case R::Token::GREATER: cout << "TOKEN(GREATER)"; break;
-        case R::Token::GREATER_EQ: cout << "TOKEN(GREATER_EQ)"; break;
-        case R::Token::NEQUALS: cout << "TOKEN(NEQUALS)"; break;
+        case R::Token::LESS: outs << "TOKEN(LESS)"; break;
+        case R::Token::LESS_EQ: outs << "TOKEN(LESS_EQ)"; break;
+        case R::Token::EQUALS: outs << "TOKEN(EQUALS)"; break;
+        case R::Token::GREATER: outs << "TOKEN(GREATER)"; break;
+        case R::Token::GREATER_EQ: outs << "TOKEN(GREATER_EQ)"; break;
+        case R::Token::NEQUALS: outs << "TOKEN(NEQUALS)"; break;
         // Scope tokens
-        case R::Token::UNSAFE: cout << "TOKEN(UNSAFE)"; break;
-        case R::Token::LBRACKET: cout << "TOKEN(LBRACKET)"; break;
-        case R::Token::RBRACKET: cout << "TOKEN(RBRACKET)"; break;
+        case R::Token::UNSAFE: outs << "TOKEN(UNSAFE)"; break;
+        case R::Token::LBRACKET: outs << "TOKEN(LBRACKET)"; break;
+        case R::Token::RBRACKET: outs << "TOKEN(RBRACKET)"; break;
         // Function tokens
-        case R::Token::FUNCTION: cout << "TOKEN(FUNCTION)"; break;
-        case R::Token::RETURN: cout << "TOKEN(RETURN)"; break;
-        case R::Token::RARROW: cout << "TOKEN(RARROW)"; break;
+        case R::Token::FUNCTION: outs << "TOKEN(FUNCTION)"; break;
+        case R::Token::RETURN: outs << "TOKEN(RETURN)"; break;
+        case R::Token::RARROW: outs << "TOKEN(RARROW)"; break;
         // If-Else tokens
-        case R::Token::IF: cout << "TOKEN(IF)"; break;
-        case R::Token::ELSE: cout << "TOKEN(ELSE)"; break;
+        case R::Token::IF: outs << "TOKEN(IF)"; break;
+        case R::Token::ELSE: outs << "TOKEN(ELSE)"; break;
         // While tokens
-        case R::Token::WHILE: cout << "TOKEN(WHILE)"; break;
+        case R::Token::WHILE: outs << "TOKEN(WHILE)"; break;
         // For tokens
-        case R::Token::FOR: cout << "TOKEN(FOR)"; break;
-        case R::Token::RANGE: cout << "TOKEN(RANGE)"; break;
-        case R::Token::IN: cout << "TOKEN(IN)"; break;
+        case R::Token::FOR: outs << "TOKEN(FOR)"; break;
+        case R::Token::RANGE: outs << "TOKEN(RANGE)"; break;
+        case R::Token::IN: outs << "TOKEN(IN)"; break;
         // Literal tokens
-        case R::Token::INTEGER: cout << "TOKEN(INTEGER)"; break;
-        case R::Token::TRUE: cout << "TOKEN(TRUE)"; break;
-        case R::Token::FALSE: cout << "TOKEN(FALSE)"; break;
-        case R::Token::TEXT: cout << "TOKEN(TEXT)"; break;
+        case R::Token::INTEGER: outs << "TOKEN(INTEGER)"; break;
+        case R::Token::TRUE: outs << "TOKEN(TRUE)"; break;
+        case R::Token::FALSE: outs << "TOKEN(FALSE)"; break;
+        case R::Token::TEXT: outs << "TOKEN(TEXT)"; break;
         // Miscellaneous operators
-        case R::Token::ASSIGN: cout << "TOKEN(ASSIGN)"; break;
-        case R::Token::ADVANCE: cout << "TOKEN(ADVANCE)"; break;
+        case R::Token::ASSIGN: outs << "TOKEN(ASSIGN)"; break;
+        case R::Token::ADVANCE: outs << "TOKEN(ADVANCE)"; break;
         // Print tokens
-        case R::Token::PRINTLN: cout << "TOKEN(PRINTLN)"; break;
+        case R::Token::PRINTLN: outs << "TOKEN(PRINTLN)"; break;
         // General purpose tokens
-        case R::Token::LPAR: cout << "TOKEN(LPAR)"; break;
-        case R::Token::RPAR: cout << "TOKEN(RPAR)"; break;
-        case R::Token::COMMA: cout << "TOKEN(COMMA)"; break;
-        case R::Token::SEMICOLON: cout << "TOKEN(SEMICOLON)"; break;
+        case R::Token::LPAR: outs << "TOKEN(LPAR)"; break;
+        case R::Token::RPAR: outs << "TOKEN(RPAR)"; break;
+        case R::Token::COMMA: outs << "TOKEN(COMMA)"; break;
+        case R::Token::SEMICOLON: outs << "TOKEN(SEMICOLON)"; break;
         // Identifier
-        case R::Token::ID: cout << "TOKEN(ID)"; break;
-        case R::Token::ID_DEC: cout << "TOKEN(ID_DEC)"; break;
+        case R::Token::ID: outs << "TOKEN(ID)"; break;
+        case R::Token::ID_DEC: outs << "TOKEN(ID_DEC)"; break;
         // Meta-tokens
-        case R::Token::END: cout << "TOKEN(END)"; break;
-        case R::Token::ERR: cout << "TOKEN(ERR)"; break; 
+        case R::Token::END: outs << "TOKEN(END)"; break;
+        case R::Token::ERR: outs << "TOKEN(ERR)"; break; 
         default: outs << "TOKEN(UNKNOWN)"; break;
     }
     return outs;

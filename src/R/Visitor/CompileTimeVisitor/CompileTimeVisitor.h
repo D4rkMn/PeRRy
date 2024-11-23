@@ -1,21 +1,16 @@
-#ifndef R_CODEGENVISITOR_H
-#define R_CODEGENVISITOR_H
+#ifndef R_COMPILETIMEVISITOR_H
+#define R_COMPILETIMEVISITOR_H
 
+#include "R/Namespace.h"
 #include "R/Visitor/IVisitor.h"
-#include "R/Environment/Environment.h"
-#include "R/Utility/VarType.h"
-#include <sstream>
-#include <fstream>
+#include <iostream>
 
-class R::CodegenVisitor : public IVisitor {
+class R::CompileTimeVisitor : public IVisitor {
 private:
-    Environment<VarType> env;
-    uint64_t labels = 0;
-    std::string nextLabel();
-    std::stringstream out;
+    bool isCompileTimeExp(Exp*);
+    std::runtime_error CompileTimeError(Exp*);
 public:
-    void generate(Program*);
-    void output(std::ofstream&);
+    void check(Program*);
     // Program
     void visit(Program*) override;
     void visit(Body*) override;

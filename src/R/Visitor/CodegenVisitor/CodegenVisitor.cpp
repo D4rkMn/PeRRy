@@ -7,8 +7,6 @@
 #include "R/ASTNodes/Exp.h"
 using namespace std;
 
-// TODO: make it so that type checker enforces return value for non void
-
 string R::CodegenVisitor::nextLabel() {
     string result = "L" + to_string(labels++);
     return result;
@@ -65,22 +63,14 @@ void R::CodegenVisitor::visit(LetVar* vardec) {
     env.addVariable(vardec->id, vardec->type);
     if (!vardec->exp) return;
     out << "LDA " << vardec->id << "\n";
-    if (vardec->type == VarType::UINT32_TYPE || vardec->type == VarType::UINT64_TYPE) {
-        isUnsigned = true;
-    } 
     vardec->exp->accept(this);
-    isUnsigned = false;
     out << "STOc" << "\n";
 }
 
 void R::CodegenVisitor::visit(StaticVar* vardec) {
     env.addVariable(vardec->id, vardec->type);
     out << "LDA " << vardec->id << "\n";
-    if (vardec->type == VarType::UINT32_TYPE || vardec->type == VarType::UINT64_TYPE) {
-        isUnsigned = true;
-    } 
     vardec->exp->accept(this);
-    isUnsigned = false;
     out << "STOc" << "\n";
 }
 
@@ -100,13 +90,15 @@ void R::CodegenVisitor::visit(Function* function) {
 }
 
 void R::CodegenVisitor::visit(ParamDecList* params) {
-    for (auto it = params->params.begin(); it != params->params.end(); it++) {
+    // parameters added in reverse because of stack's LIFO structure
+    for (auto it = params->params.rbegin(); it != params->params.rend(); it++) {
         it->accept(this);
     }
 }
 
 void R::CodegenVisitor::visit(ParamDec* param) {
     env.addVariable(param->id, param->type);
+    out << "SROc " << param->id << "\n";
 }
 
 // Stm
@@ -119,22 +111,14 @@ void R::CodegenVisitor::visit(ExpStatement* stm) {
 void R::CodegenVisitor::visit(AssignStatement* stm) {
     VarType type = env.getVariableValue(stm->id).value();
     out << "LDA " << stm->id << "\n";
-    if (type == VarType::UINT32_TYPE || type == VarType::UINT64_TYPE) {
-        isUnsigned = true;
-    }
     stm->rhs->accept(this);
-    isUnsigned = false;
     out << "STOc\n";
 }
 
 void R::CodegenVisitor::visit(AdvanceStatement* stm) {
     VarType type = env.getVariableValue(stm->id).value();
     out << "LDA " << stm->id << "\n";
-    if (type == VarType::UINT32_TYPE || type == VarType::UINT64_TYPE) {
-        isUnsigned = true;
-    }
     stm->rhs->accept(this);
-    isUnsigned = false;
     out << "INCc\n";
 }
 
@@ -155,6 +139,7 @@ void R::CodegenVisitor::visit(PrintStatement* stm) {
         (*it)->accept(this);
         out << "PRINT\n";
     }
+    out << "PRINTLN\n";
 }
 
 void R::CodegenVisitor::visit(IfStatement* stm) {
@@ -229,13 +214,12 @@ void R::CodegenVisitor::visit(ScopeStatement* stm) {
 R::IVisitorReturn* R::CodegenVisitor::visit(BinaryExp* exp) {
     exp->left->accept(this);
     exp->right->accept(this);
-    char arithmetic = isUnsigned ? 'U' : 'I';
     switch (exp->op) {
         // Arithmetic operators
-        case PLUS_OP: out << "AD" << arithmetic; break;
-        case MINUS_OP: out << "SB" << arithmetic; break;
-        case MUL_OP: out << "MP" << arithmetic; break;
-        case DIV_OP: out << "DV" << arithmetic; break;
+        case PLUS_OP: out << "ADI"; break;
+        case MINUS_OP: out << "SBI"; break;
+        case MUL_OP: out << "MPI"; break;
+        case DIV_OP: out << "DVI"; break;
         // Boolean operators
         case LESS_OP: out << "LESc"; break;
         case LESS_EQ_OP: out << "LEQc"; break;

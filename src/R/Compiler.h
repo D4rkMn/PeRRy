@@ -18,6 +18,8 @@
 #include "R/Visitor/ConstVisitor/ConstVisitor.h"
 // Expression reducing
 #include "R/Visitor/ExpReduceVisitor/ExpReduceVisitor.h"
+// Compile-time expression checking
+#include "R/Visitor/CompileTimeVisitor/CompileTimeVisitor.h"
 // Code generation
 #include "R/Visitor/CodegenVisitor/CodegenVisitor.h"
 
@@ -30,6 +32,7 @@ private:
     TypeVisitor typeChecker;
     ConstVisitor constReplacer;
     ExpReduceVisitor expReducer;
+    CompileTimeVisitor compileTimeChecker;
     CodegenVisitor codeGenerator;
 
     std::ifstream inputFile;

@@ -26,7 +26,8 @@ void R::Compiler::compile() {
     }
     inputFile.close();
 
-    parser.isDebug = printer.isDebug = typeChecker.isDebug = constReplacer.isDebug = expReducer.isDebug = codeGenerator.isDebug = isDebug;
+    parser.isDebug = printer.isDebug = typeChecker.isDebug = constReplacer.isDebug =
+    expReducer.isDebug = compileTimeChecker.isDebug = codeGenerator.isDebug = isDebug;
 
     scanner.setInput(code);
     if (isDebug) scanner.test();
@@ -42,6 +43,7 @@ void R::Compiler::compile() {
 
     expReducer.reduce(program);
     if (isDebug) printer.print(program);
+    compileTimeChecker.check(program);
 
     codeGenerator.generate(program);
     if (outputFile.is_open()) {
