@@ -62,6 +62,11 @@ bool R::Environment<T>::updateVariableValue(const string& x, const T& v) {
 }
 
 template <typename T>
+size_t R::Environment<T>::getVariableLevel(const string& x) const {
+    return searchRib(x);
+}
+
+template <typename T>
 bool R::Environment<T>::checkVariableExists(const string& x) const {
     int idx = searchRib(x);
     return (idx >= 0);

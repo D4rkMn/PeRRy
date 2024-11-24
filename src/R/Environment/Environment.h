@@ -27,6 +27,7 @@ public:
     void addVariable(const std::string&, const T&);
     bool updateVariableValue(const std::string&, const T&);
 
+    size_t getVariableLevel(const std::string&) const;
     bool checkVariableExists(const std::string&) const;
     std::optional<T> getVariableValue(const std::string&) const;
 };

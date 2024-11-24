@@ -29,6 +29,7 @@ void R::CodegenVisitor::generate(Program* program) {
 
 void R::CodegenVisitor::visit(Program* program) {
     env.addLevel();
+    functions.addLevel();
     for (auto it = program->programList.begin(); it != program->programList.end(); it++) {
         // global var declarations
         if ((*it)->getType() == ASTNodeType::STATICVAR_NODE) {
@@ -44,6 +45,7 @@ void R::CodegenVisitor::visit(Program* program) {
             (*it)->accept(this);
         }
     }
+    functions.removeLevel();
     env.removeLevel();
 }
 
@@ -61,15 +63,17 @@ void R::CodegenVisitor::visit(Body* body) {
 
 void R::CodegenVisitor::visit(LetVar* vardec) {
     env.addVariable(vardec->id, vardec->type);
+    size_t level = env.getVariableLevel(vardec->id);
     if (!vardec->exp) return;
-    out << "LDA " << vardec->id << "\n";
+    out << "LDA " << vardec->id << level << "\n";
     vardec->exp->accept(this);
     out << "STOc" << "\n";
 }
 
 void R::CodegenVisitor::visit(StaticVar* vardec) {
     env.addVariable(vardec->id, vardec->type);
-    out << "LDA " << vardec->id << "\n";
+    size_t level = env.getVariableLevel(vardec->id);
+    out << "LDA " << vardec->id << level << "\n";
     vardec->exp->accept(this);
     out << "STOc" << "\n";
 }
@@ -83,6 +87,7 @@ void R::CodegenVisitor::visit(ConstVar* vardec) {
 void R::CodegenVisitor::visit(Function* function) {
     out << "ENT " << function->id << "\n";
     env.addLevel();
+    functions.addVariable(function->id, function->type);
     if (function->params) function->params->accept(this);
     function->body->accept(this);
     env.removeLevel();
@@ -99,7 +104,8 @@ void R::CodegenVisitor::visit(ParamDecList* params) {
 
 void R::CodegenVisitor::visit(ParamDec* param) {
     env.addVariable(param->id, param->type);
-    out << "SROc " << param->id << "\n";
+    size_t level = env.getVariableLevel(param->id);
+    out << "SROc " << param->id << level << "\n";
 }
 
 // Stm
@@ -114,13 +120,15 @@ void R::CodegenVisitor::visit(ExpStatement* stm) {
 }
 
 void R::CodegenVisitor::visit(AssignStatement* stm) {
-    out << "LDA " << stm->id << "\n";
+    size_t level = env.getVariableLevel(stm->id);
+    out << "LDA " << stm->id << level << "\n";
     stm->rhs->accept(this);
     out << "STOc\n";
 }
 
 void R::CodegenVisitor::visit(AdvanceStatement* stm) {
-    out << "LDA " << stm->id << "\n";
+    size_t level = env.getVariableLevel(stm->id);
+    out << "LDA " << stm->id << level << "\n";
     stm->rhs->accept(this);
     out << "INCc\n";
 }
@@ -134,7 +142,6 @@ void R::CodegenVisitor::visit(ReturnStatement* stm) {
     else {
         // RETn is for return nothing
         out << "RETn\n";
-        if (awaitingExpPop) voidReturn = true;
     }
 }
 
@@ -182,20 +189,21 @@ void R::CodegenVisitor::visit(ForStatement* stm) {
 
     string L1 = nextLabel(), L2 = nextLabel();
     env.addVariable(stm->id, VarType::INT32_TYPE);
+    size_t level = env.getVariableLevel(stm->id);
     
-    out << "LDA " << stm->id << "\n";
+    out << "LDA " << stm->id << level << "\n";
     stm->start->accept(this);
     out << "STOc\n";
 
     out << L1 << "\n";
-    out << "LODc " << stm->id << "\n";
+    out << "LODc " << stm->id << level << "\n";
     stm->end->accept(this);
     out << "LESc\n";
     out << "FJP " << L2 << "\n";
 
     stm->body->accept(this);
 
-    out << "LDA " << stm->id << "\n";
+    out << "LDA " << stm->id << level << "\n";
     out << "LDCc 1\n";
     out << "INCc\n";
     out << "UJP " << L1 << "\n";
@@ -266,11 +274,16 @@ R::IVisitorReturn* R::CodegenVisitor::visit(IntegerExp* exp) {
 }
 
 R::IVisitorReturn* R::CodegenVisitor::visit(IdentifierExp* exp) {
-    out << "LODc " << exp->name << "\n";
+    size_t level = env.getVariableLevel(exp->name);
+    out << "LODc " << exp->name << level << "\n";
     return nullptr;
 }
 
 R::IVisitorReturn* R::CodegenVisitor::visit(FunctionExp* exp) {
+    if (awaitingExpPop) {
+        VarType type = functions.getVariableValue(exp->name).value();
+        voidReturn = (type == VarType::VOID_TYPE);
+    }
     // MSTp is mark stack for procedure
     out << "MSTp\n";
     for (auto it = exp->args.begin(); it != exp->args.end(); it++) {

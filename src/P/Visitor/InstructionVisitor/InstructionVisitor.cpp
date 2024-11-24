@@ -20,7 +20,6 @@ void P::InstructionVisitor::visit(Program* p) {
     env.addLevel();
     markFunctionStack.push({0, ".null"});
     for (; pc < program->instructions.size(); pc++) {
-        //printf("pc: %ld\n", pc);
         program->instructions[pc]->accept(this);
     }
     env.removeLevel();
@@ -36,13 +35,17 @@ void P::InstructionVisitor::visit(StopInstruction* ins) {
 
 void P::InstructionVisitor::visit(EnterInstruction* ins) {
     env.addLevel();
-    markFunctionStack.push({mainStack.size(), ins->functionName + to_string(unique++)});
 }
 
 void P::InstructionVisitor::visit(MarkInstruction* ins) {
-    env.addLevel();
     string currentFunction = markFunctionStack.top().second;
-    markStack.push({mainStack.size(), currentFunction});
+    if (ins->functionEnter) {
+        markFunctionStack.push({mainStack.size(), currentFunction + to_string(unique++)});
+    }
+    else {
+        env.addLevel();
+        markStack.push({mainStack.size(), currentFunction});
+    }
 }
 
 void P::InstructionVisitor::visit(ReturnInstruction* ins) {
@@ -63,10 +66,10 @@ void P::InstructionVisitor::visit(ReturnInstruction* ins) {
     if (markFunctionStack.empty()) {
         throw InterpretError("No hay ningun stack frame marcado");
     }
-    // TODO: fix this bug where assigning function values it dies because of this:
     if (markFunctionStack.top().first > mainStack.size()) {
         throw InterpretError("Stack frame ha sido modificado erróneamente");
     }
+    env.removeLevel();
     bool returning = false;
     int64_t returnValue = 0;
     if (ins->type == ReturnInstruction::F_RET) {
@@ -78,11 +81,11 @@ void P::InstructionVisitor::visit(ReturnInstruction* ins) {
         returnValue = value->value;
         returning = true;
     }
-    while (markFunctionStack.top().first < mainStack.size()) {
+    while (!mainStack.empty() && markFunctionStack.top().first < mainStack.size()) {
         mainStack.pop();
     }
     string currentFunction = markFunctionStack.top().second;
-    while (markStack.top().second == currentFunction) {
+    while (!markStack.empty() && markStack.top().second == currentFunction) {
         markStack.pop();
         env.removeLevel();
     }
@@ -112,7 +115,6 @@ void P::InstructionVisitor::visit(LoadVarInstruction* ins) {
         string msg = ins->id + " no ha sido declarado en este scope";
         throw InterpretError(msg);
     }
-    //printf("%s: %lu\n", ins->id.c_str(), option.value());
     mainStack.push(new ValueObject(option.value()));
 }
 
@@ -127,9 +129,6 @@ void P::InstructionVisitor::visit(StoreStackInstruction* ins) {
     }
     ValueObject* value = dynamic_cast<ValueObject*>(_value);
     AddressObject* target = dynamic_cast<AddressObject*>(_target);
-
-    printf("storing value %ld at target %s\n", value->value, target->id.c_str());
-
     bool exists = env.checkVariableExists(target->id);
     if (!exists) {
         env.addVariable(target->id, value->value);
@@ -169,13 +168,7 @@ void P::InstructionVisitor::visit(StoreToVarInstruction* ins) {
         throw InterpretError("Los elementos del stack no coinciden con la operación");
     }
     ValueObject* value = dynamic_cast<ValueObject*>(_value);
-    bool exists = env.checkVariableExists(ins->id);
-    if (!exists) {
-        env.addVariable(ins->id, value->value);
-    }
-    else {
-        env.updateVariableValue(ins->id, value->value);
-    }
+    env.addVariable(ins->id, value->value);
 }
 
 void P::InstructionVisitor::visit(LabelInstruction* ins) {
@@ -256,7 +249,7 @@ void P::InstructionVisitor::visit(PrintInstruction* ins) {
         return;
     }
     if (mainStack.empty()) {
-        throw InterpretError("El stack no tiene suficiente espacio para este operación");   
+        throw InterpretError("El stack no tiene suficiente espacio para este operación");
     }
     auto _value = mainStack.top(); mainStack.pop();
     if (_value->getType() != IStackObject::VALUE_OBJECT) {

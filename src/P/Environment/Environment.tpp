@@ -27,6 +27,11 @@ void P::Environment<T>::clear() {
 }
 
 template <typename T>
+size_t P::Environment<T>::getVariableLevel(const string& var) const {
+    return searchRib(var);
+}
+
+template <typename T>
 void P::Environment<T>::addVariable(const string& var, const T& value) {
     if (ribs.size() == 0) {
         throw runtime_error("Error: Environment sin niveles - no se pueden agregar variables");

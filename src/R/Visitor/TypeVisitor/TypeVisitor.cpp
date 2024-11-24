@@ -104,6 +104,11 @@ void R::TypeVisitor::visit(LetVar* vardec) {
     if (vardec->type == VarType::UNKNOWN_TYPE) {
         lhsType = vardec->type;
         vardec->type = getType(vardec->exp->accept(this));
+        if (vardec->type == VarType::VOID_TYPE) {
+            string msg = "Error: Se intentó asignar 'void' a una variable";
+            throw runtime_error(msg);
+        }
+        lhsType = VarType::VOID_TYPE;
         varEnv.addVariable(vardec->id, {EnvVariable::LET_VAR, vardec->type, vardec->mut});
         return;
     }
@@ -113,6 +118,7 @@ void R::TypeVisitor::visit(LetVar* vardec) {
     }
     lhsType = vardec->type;
     VarType obtainedType = getType(vardec->exp->accept(this));
+    lhsType = VarType::VOID_TYPE;
     checkTypes(vardec->type, obtainedType);
     varEnv.addVariable(vardec->id, {EnvVariable::LET_VAR, vardec->type, vardec->mut});
 }
@@ -145,6 +151,9 @@ void R::TypeVisitor::visit(Function* function) {
     checkTypes(expectedReturnType, obtainedReturnType);
     expectedReturnType = VarType::UNKNOWN_TYPE;
     varEnv.removeLevel();
+    if (function->type == VarType::VOID_TYPE) {
+        function->body->bodyList.push_back(new ReturnStatement(nullptr));
+    }
 }
 
 void R::TypeVisitor::visit(ParamDecList* params) {
@@ -159,7 +168,9 @@ void R::TypeVisitor::visit(ParamDec* param) {
 
 // Stm
 void R::TypeVisitor::visit(ExpStatement* stm) {
+    isExpStm = true;
     stm->exp->accept(this);
+    isExpStm = false;
 }
 
 void R::TypeVisitor::visit(AssignStatement* stm) {
@@ -229,7 +240,11 @@ void R::TypeVisitor::visit(ReturnStatement* stm) {
 }
 
 void R::TypeVisitor::visit(PrintStatement* stm) {
-    // nothing to check
+    lhsType = VarType::UNKNOWN_TYPE;
+    for (auto it = stm->expList.begin(); it != stm->expList.end(); it++) {
+        (*it)->accept(this);
+    }
+    lhsType = VarType::VOID_TYPE;
 }
 
 void R::TypeVisitor::visit(IfStatement* stm) {
@@ -335,16 +350,16 @@ R::IVisitorReturn* R::TypeVisitor::visit(IntegerExp* exp) {
     }
     if (exp->isImplicit) {
         bool castable;
-        if (!awaitingReturn) {
-            castable = tryImplicitCast(lhsType, exp);
-            if (!castable) {
-                checkTypes(lhsType, exp->type);
-            }
-        }
-        else {
+        if (awaitingReturn) {
             castable = tryImplicitCast(expectedReturnType, exp);
             if (!castable) {
                 checkTypes(expectedReturnType, exp->type);
+            }
+        }
+        else if (!isExpStm) {
+            castable = tryImplicitCast(lhsType, exp);
+            if (!castable) {
+                checkTypes(lhsType, exp->type);
             }
         }
     }

@@ -12,6 +12,7 @@ private:
     bool awaitingExpPop = false;
     bool voidReturn = false;
     Environment<VarType> env;
+    Environment<VarType> functions;
     uint64_t labels = 0;
     std::string nextLabel();
     std::stringstream out;

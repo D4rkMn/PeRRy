@@ -16,6 +16,7 @@ private:
     Environment<FunctionType> functionEnv;
     bool checkingComparison = false;
     bool awaitingReturn = false;
+    bool isExpStm = false;
     VarType expectedReturnType = VarType::UNKNOWN_TYPE;
     VarType obtainedReturnType = VarType::UNKNOWN_TYPE;
     VarType lhsType = VarType::VOID_TYPE;
