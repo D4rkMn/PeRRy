@@ -4,6 +4,14 @@ Esta es la gramática que representa el lenguaje de cadenas aceptadas por mi par
 
 ```math
 
+when \to but \\
+
+when \to but
+
+```
+
+```math
+
 
 Program \to (Function \mid VarDec\ \textbf{;})^* \\
 
