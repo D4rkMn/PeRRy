@@ -5,11 +5,11 @@ Esta es la gramática que representa el lenguaje de cadenas aceptadas por mi par
 ```math
 
 \begin{align*}
-when \to but \\
 
-when \to but \\
+Program \to (Function \mid VarDec\ \textbf{;})^* \\
 
-\textbf{hola xd}\\
+VarDec \to \textbf{let}\ [\textbf{mut}]\ Id\ (\ \textbf{:}\ Type\ [\
+\textbf{=}\ BExp\ ] \mid \textbf{=}\ BExp\ ) \\
 
 \end{align*}
 
@@ -18,10 +18,7 @@ when \to but \\
 ```math
 
 
-Program \to (Function \mid VarDec\ \textbf{;})^* \\
 
-VarDec \to \textbf{let}\ [\textbf{mut}]\ Id\ (\ \textbf{:}\ Type\ [\
-\textbf{=}\ BExp\ ] \mid \textbf{=}\ BExp\ ) \\
 
 Function \to \textbf{fn}\ Id\ \textbf{(}\ [ParamDecList]\ \textbf{)}\
 [\textbf{->}\ Type]\ \textbf{\{}\ Body\ \textbf{\}} \\
