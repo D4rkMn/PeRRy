@@ -6,11 +6,11 @@
 CC = g++
 CXXFLAGS = -std=c++20 -Wall -g -O0 -I./src
 
-INPUTFOLDER = input
-INPUTFILE = input5.rs
+INPUTFILE = input/input5.rs
+OUTPUTFILE = output/output.p0
 
 # Makefile settings - Can be customized.
-APPNAME = RustC
+APPNAME = PeRRy
 EXT = .cpp
 SRCDIR = src
 OBJDIR = obj
@@ -64,7 +64,7 @@ $(DEPDIR)/%.d: $(SRCDIR)/%$(EXT)
 # Rule to compile and run the app
 .PHONY: run
 run: $(APPNAME)
-	./$(APPNAME) $(INPUTFOLDER)/$(INPUTFILE)
+	./$(APPNAME) $(INPUTFILE) $(OUTPUTFILE)
 
 ################### Cleaning rules for Unix-based OS ###################
 # Cleans complete project

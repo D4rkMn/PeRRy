@@ -6,7 +6,7 @@
 
 // Headers
 #include "R/Namespace.h"
-// Scanner
+// Scanning
 #include "R/Scanner/Scanner.h"
 // Parsing
 #include "R/Parser/Parser.h"

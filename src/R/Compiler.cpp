@@ -1,4 +1,5 @@
 #include "R/Compiler.h"
+#include "R/ASTNodes/Program.h"
 using namespace std;
 
 void R::Compiler::setInputFile(const std::string& _input) {
@@ -18,6 +19,8 @@ void R::Compiler::setOutputFile(const std::string& _output) {
 }
 
 void R::Compiler::compile() {
+    if (isDebug) cout << "\nIniciando R::Compiler:\n\n";
+
     // get input file's code
     string code = "";
     string line = "";
@@ -51,5 +54,6 @@ void R::Compiler::compile() {
         outputFile.close();
     }
 
-    cout << "Compilacion exitosa\n";
+    delete program;
+    if (isDebug) cout << "Compilacion exitosa\n";
 }

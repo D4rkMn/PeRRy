@@ -5,6 +5,7 @@
 #include "P/Visitor/IVisitor.h"
 #include "P/Environment/Environment.h"
 #include "P/Instruction/Program.h"
+#include "P/Visitor/InstructionVisitor/DynamicStack.h"
 #include <iostream>
 #include <stack>
 #include <unordered_map>
@@ -12,7 +13,7 @@
 class P::InstructionVisitor : public IVisitor {
 private:
 
-    std::stack<IStackObject*> mainStack;
+    DynamicStack<IStackObject*> mainStack;
     std::stack< std::pair<uint64_t, std::string> > markStack;
     std::stack< std::pair<uint64_t, std::string> > markFunctionStack;
     std::stack<uint64_t> pcStack;

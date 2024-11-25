@@ -5,6 +5,7 @@
 
 class P::IVisitor {
 public:
+    bool isDebug = true;
     virtual void visit(Program*) = 0;
     virtual void visit(PopInstruction*) = 0;
     virtual void visit(StopInstruction*) = 0;

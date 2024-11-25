@@ -78,6 +78,7 @@ void R::ConstVisitor::visit(Program* program) {
     for (auto it = program->programList.begin(); it != program->programList.end();) {
         (*it)->accept(this);
         if (deleteConstDec) {
+            if (*it) delete *it;
             it = program->programList.erase(it);
             deleteConstDec = false;
         }
@@ -95,6 +96,7 @@ void R::ConstVisitor::visit(Body* body) {
     for (auto it = body->bodyList.begin(); it != body->bodyList.end();) {
         (*it)->accept(this);
         if (deleteConstDec) {
+            if (*it) delete *it;
             it = body->bodyList.erase(it);
             deleteConstDec = false;
         }

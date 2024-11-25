@@ -29,9 +29,12 @@ namespace P {
     // Visitor
     class IVisitor;
     class InstructionVisitor;
+    template <class T> class DynamicStack;
     class IStackObject;   
     class AddressObject;
     class ValueObject;
+    // Interpreter
+    class Interpreter;
 }
 
 #endif

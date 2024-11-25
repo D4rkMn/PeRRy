@@ -1,0 +1,74 @@
+MSTp
+CUP main
+STP
+ENT factorial
+SROc n1
+MST
+LODc n1
+LDCc 0
+EQUc
+FJP L0
+MST
+LDCc 1
+RETv
+RET
+L0
+LODc n1
+MSTp
+LODc n1
+LDCc 1
+SBI
+CUP factorial
+MPI
+RETv
+RET
+RETn
+ENT fibonacci
+SROc n1
+MST
+LODc n1
+LDCc 0
+EQUc
+FJP L1
+MST
+LDCc 0
+RETv
+RET
+L1
+LODc n1
+LDCc 1
+EQUc
+FJP L2
+MST
+LDCc 1
+RETv
+RET
+L2
+MSTp
+LODc n1
+LDCc 1
+SBI
+CUP fibonacci
+MSTp
+LODc n1
+LDCc 2
+SBI
+CUP fibonacci
+ADI
+RETv
+RET
+RETn
+ENT main
+MST
+LDA x2
+MSTp
+LDCc 5
+CUP factorial
+STOc
+LODc x2
+PRINT
+PRINTLN
+RETn
+RET
+RETn
+

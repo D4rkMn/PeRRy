@@ -11,9 +11,11 @@ std::runtime_error P::InstructionVisitor::InterpretError(const std::string& s) {
 }
 
 void P::InstructionVisitor::interpret(Program* p) {
+    if (isDebug) cout << "Interpretando programa:\n\n";
     program = p;
     program->accept(this);
     program = nullptr;
+    if (isDebug) cout << "\nInterpreter exitoso\n\n";
 }
 
 void P::InstructionVisitor::visit(Program* p) {
