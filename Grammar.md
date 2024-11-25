@@ -7,7 +7,10 @@ Esta es la gramática que representa el lenguaje de cadenas aceptadas por mi par
 \begin{align*}
 when \to but \\
 
-when \to but
+when \to but \\
+
+\textbf{hola xd}\\
+
 \end{align*}
 
 ```
