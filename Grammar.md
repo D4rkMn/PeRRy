@@ -4,9 +4,11 @@ Esta es la gramática que representa el lenguaje de cadenas aceptadas por mi par
 
 ```math
 
+\begin{align*}
 when \to but \\
 
 when \to but
+\end{align*}
 
 ```
 
