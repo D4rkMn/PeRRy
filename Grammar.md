@@ -1,3 +1,7 @@
+# Gramática Rust 
+
+Esta es la gramática que representa el lenguaje de cadenas aceptadas por mi parser. Puede que hayan algunas diferencias entre esta y la implementación real, pero conceptualmente se da a entender la idea.
+
 $$
 \begin{align*}
 
@@ -5,7 +9,7 @@ $$
 Program \to (Function \mid VarDec\ \textbf{;})^* \\
 
 VarDec \to \textbf{let}\ [\textbf{mut}]\ Id\ (\ \textbf{:}\ Type\ [\
-\textbf{=}\ CExp\ ] \mid \textbf{=}\ CExp\ ) \\
+\textbf{=}\ BExp\ ] \mid \textbf{=}\ BExp\ ) \\
 
 Function \to \textbf{fn}\ Id\ \textbf{(}\ [ParamDecList]\ \textbf{)}\
 [\textbf{->}\ Type]\ \textbf{\{}\ Body\ \textbf{\}} \\
@@ -16,7 +20,7 @@ $$
 $$
 \begin{align*}
 
-Type \to \textbf{i32} \mid \textbf{i64} \\
+Type \to \textbf{i32} \mid \textbf{i64} \mid \textbf{u32} \mid \textbf{u64} \mid \textbf{bool} \\
 
 Body \to ( VarDec\ \textbf{;} \mid Stm )^* \\
 
@@ -29,22 +33,22 @@ $$
 $$
 \begin{align*}
 
-Stm \to \textbf{if}\ CExp\ \textbf{\{}\ Body\ \textbf{\}}\
+Stm \to \textbf{if}\ BExp\ \textbf{\{}\ Body\ \textbf{\}}\
 [\ \textbf{else}\ \textbf{\{}\ Body\ \textbf{\}}\ ] \mid \\
 
-\textbf{for}\ Id\ \textbf{in}\ CExp\ \textbf{..}\ Cexp\ \textbf{\{}
+\textbf{for}\ Id\ \textbf{in}\ BExp\ \textbf{..}\ Bexp\ \textbf{\{}
 \ Body\ \textbf{\}} \mid \\
 
 \textbf{println!}\ \textbf{(} \textbf{Text}\
-(\ \textbf{,}\ CExp\ )^* \ \textbf{)}\ \textbf{;}  \mid \\
+(\ \textbf{,}\ BExp\ )^* \ \textbf{)}\ \textbf{;}  \mid \\
 
-\textbf{return}\ [\ CExp\ ]\ \textbf{;} \mid \\
+\textbf{return}\ [\ BExp\ ]\ \textbf{;} \mid \\
 
-Id\ \textbf{+=}\ CExp\ \textbf{;} \mid \\
+Id\ \textbf{+=}\ BExp\ \textbf{;} \mid \\
 
-Id\ \textbf{=}\ CExp\ \textbf{;} \mid \\
+Id\ \textbf{=}\ BExp\ \textbf{;} \mid \\
 
-CExp\ \textbf{;}\ \
+BExp\ \textbf{;}\ \
 
 \end{align*}
 $$
@@ -52,6 +56,7 @@ $$
 $$
 \begin{align*}
 
+BExp \to [\ \textbf{!}\ ]\ CExp \\
 
 CExp \to Exp\ [\ (\ \textbf{<} \mid \textbf{<=} \mid\textbf{==})\ Exp\ ] \\
 
@@ -59,10 +64,10 @@ Exp \to Term\ (\ (+\mid-)\ Term\ )^* \\
 
 Term \to Factor\ (\ (*\mid/)\ Factor\ )^* \\
 
-Factor \to Id \mid Integer \mid \textbf{(} CExp \textbf{)} \mid 
+Factor \to Id \mid Integer \mid \textbf{(} BExp \textbf{)} \mid 
 Id(\ [\  ArgList\ ] \ ) \\
 
-ArgList \to CExp (\ \textbf{,}\ CExp\ )^* \\
+ArgList \to BExp (\ \textbf{,}\ BExp\ )^* \\
 
 \end{align*}
 $$

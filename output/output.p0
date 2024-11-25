@@ -60,14 +60,14 @@ RET
 RETn
 ENT main
 MST
-LDA x2
-MSTp
-LDCc 5
-CUP factorial
-STOc
-LODc x2
+LDCc 0
+FJP L3
+MST
+LDCc 123
 PRINT
 PRINTLN
+RET
+L3
 RETn
 RET
 RETn

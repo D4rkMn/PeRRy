@@ -192,7 +192,7 @@ R::Token* R::Scanner::nextToken() {
                     token = new Token(Token::NEQUALS, "!=", 0, 2, line);
                     current++;
                 } else {
-                    // Reserved for NOT
+                    token = new Token(Token::NOT, c, line);
                 }
                 break;
             }

@@ -32,6 +32,7 @@ std::ostream& operator<<(std::ostream& outs, const R::Token& tok) {
         case R::Token::LESS: outs << "TOKEN(LESS)"; break;
         case R::Token::LESS_EQ: outs << "TOKEN(LESS_EQ)"; break;
         case R::Token::EQUALS: outs << "TOKEN(EQUALS)"; break;
+        case R::Token::NOT: outs << "TOKEN(NOT)"; break;
         case R::Token::GREATER: outs << "TOKEN(GREATER)"; break;
         case R::Token::GREATER_EQ: outs << "TOKEN(GREATER_EQ)"; break;
         case R::Token::NEQUALS: outs << "TOKEN(NEQUALS)"; break;

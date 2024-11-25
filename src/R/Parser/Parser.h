@@ -38,6 +38,7 @@ private:
     Body* parseBody();
     Stm* parseStatement();
 
+    Exp* parseBExpression();
     Exp* parseCExpression();
     Exp* parseExpression();
     Exp* parseTerm();

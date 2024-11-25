@@ -13,7 +13,7 @@ public:
         LET, CONST, STATIC, MUT, // Variable declaration tokens
         INT32, INT64, UINT32, UINT64, BOOL, // Type tokens
         PLUS, MINUS, MUL, DIV, // Arithmetic operators
-        LESS, LESS_EQ, EQUALS, // Boolean comparisons
+        LESS, LESS_EQ, EQUALS, NOT, // Boolean comparisons
         GREATER, GREATER_EQ, NEQUALS, // Boolean comparisons
         UNSAFE, LBRACKET, RBRACKET, // Scope tokens
         FUNCTION, RETURN, RARROW, // Function tokens

@@ -116,7 +116,7 @@ R::LetVar* R::Parser::parseLetVar() {
         // Explicit and assignment
         Exp* exp = nullptr;
         if (match(Token::ASSIGN)) {
-            exp = parseCExpression();
+            exp = parseBExpression();
         }
         // If non mut (const) and no assignment
         else if (!mut) {
@@ -132,7 +132,7 @@ R::LetVar* R::Parser::parseLetVar() {
     if (!match(Token::ASSIGN)) {
         throw SyntaxError("Se esperaba un '='");
     }
-    Exp* exp = parseCExpression();
+    Exp* exp = parseBExpression();
     return new LetVar(mut, id, VarType::UNKNOWN_TYPE, exp);
 }
 
@@ -151,7 +151,7 @@ R::StaticVar* R::Parser::parseStaticVar() {
     if (!match(Token::ASSIGN)) {
         throw SyntaxError("Se esperaba un '='");
     }
-    Exp* exp = parseCExpression();
+    Exp* exp = parseBExpression();
     return new StaticVar(mut, id, type, exp);
 }
 
@@ -168,7 +168,7 @@ R::ConstVar* R::Parser::parseConstVar() {
     if (!match(Token::ASSIGN)) {
         throw SyntaxError("Se esperaba un '='");
     }
-    Exp* exp = parseCExpression();
+    Exp* exp = parseBExpression();
     return new ConstVar(id, type, exp);
 }
 
@@ -201,7 +201,7 @@ R::Body* R::Parser::parseBody() {
 R::Stm* R::Parser::parseStatement() {
     // Parse if
     if (match(Token::IF)) {
-        Exp* exp = parseCExpression();
+        Exp* exp = parseBExpression();
         if (!match(Token::LBRACKET)) {
             throw SyntaxError("Se esperaba un '{'");
         }
@@ -224,7 +224,7 @@ R::Stm* R::Parser::parseStatement() {
     }
     // Parse while
     if (match(Token::WHILE)) {
-        Exp* exp = parseCExpression();
+        Exp* exp = parseBExpression();
         if (!match(Token::LBRACKET)) {
             throw SyntaxError("Se esperaba un '{'");
         }
@@ -243,11 +243,11 @@ R::Stm* R::Parser::parseStatement() {
         if (!match(Token::IN)) {
             throw SyntaxError("Se esperaba 'in'");
         }
-        Exp* start = parseCExpression();
+        Exp* start = parseBExpression();
         if (!match(Token::RANGE)) {
             throw SyntaxError("Se esperaba '..'");
         }
-        Exp* end = parseCExpression();
+        Exp* end = parseBExpression();
         if (!match(Token::LBRACKET)) {
             throw SyntaxError("Se esperaba un '{'");
         }
@@ -297,7 +297,7 @@ R::Stm* R::Parser::parseStatement() {
         }
         // Get args
         while (match(Token::COMMA)) {
-            stm->expList.push_back(parseCExpression());
+            stm->expList.push_back(parseBExpression());
         }
         if (stm->expList.size() != args) {
             string msg = "Error: Se esperaban '" + to_string(args) +
@@ -317,7 +317,7 @@ R::Stm* R::Parser::parseStatement() {
     if (match(Token::RETURN)) {
         Exp* exp = nullptr;
         if (!match(Token::SEMICOLON)) {
-            exp = parseCExpression();
+            exp = parseBExpression();
             if (!match(Token::SEMICOLON)) {
                 throw SyntaxError("Se esperaba un ';'");
             }
@@ -329,14 +329,14 @@ R::Stm* R::Parser::parseStatement() {
         string id = previous->text;
         Stm* stm = nullptr;
         if (match(Token::ASSIGN)) {
-            stm = new AssignStatement(id, parseCExpression());
+            stm = new AssignStatement(id, parseBExpression());
         }
         else if (match(Token::ADVANCE)) {
-            stm = new AdvanceStatement(id, parseCExpression());
+            stm = new AdvanceStatement(id, parseBExpression());
         }
         else {
             backtrack();
-            stm = new ExpStatement(parseCExpression());
+            stm = new ExpStatement(parseBExpression());
         }
         if (!match(Token::SEMICOLON)) {
             throw SyntaxError("Se esperaba un ';'");
@@ -344,7 +344,7 @@ R::Stm* R::Parser::parseStatement() {
         return stm;
     }
     try {
-        Exp* exp = parseCExpression();
+        Exp* exp = parseBExpression();
         if (!match(Token::SEMICOLON)) {
             throw SyntaxError("Se esperaba un ';'");
         }
@@ -353,6 +353,14 @@ R::Stm* R::Parser::parseStatement() {
     catch (exception& e) {
         throw SyntaxError("Se esperaba un statement");
     }
+}
+
+R::Exp* R::Parser::parseBExpression() {
+    if (match(Token::NOT)) {
+        Exp* e = parseCExpression();
+        return new UnaryExp(e, NOT_OP);
+    }
+    return parseCExpression();
 }
 
 R::Exp* R::Parser::parseCExpression() {
@@ -400,10 +408,10 @@ R::Exp* R::Parser::parseFactor() {
             return function;
         }
         // Parse arglist
-        Exp* exp = parseCExpression();
+        Exp* exp = parseBExpression();
         function->args.push_back(exp);
         while (match(Token::COMMA)) {
-            exp = parseCExpression();
+            exp = parseBExpression();
             function->args.push_back(exp);
         }
         if (!match(Token::RPAR)) {
@@ -439,7 +447,7 @@ R::Exp* R::Parser::parseFactor() {
         return new IntegerExp(previous->type == Token::TRUE);
     }
     if (match(Token::LPAR)) {
-        Exp* exp = parseCExpression();
+        Exp* exp = parseBExpression();
         if (!match(Token::RPAR)) {
             throw SyntaxError("Se esperaba un ')'");
         }
