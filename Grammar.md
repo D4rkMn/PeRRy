@@ -3,10 +3,7 @@
 Esta es la gramática que representa el lenguaje de cadenas aceptadas por mi parser. Puede que hayan algunas diferencias entre esta y la implementación real, pero conceptualmente se da a entender la idea.
 
 ```math
-test \to when
-```
 
-$$
 \begin{align*}
 
 
@@ -18,10 +15,8 @@ VarDec \to \textbf{let}\ [\textbf{mut}]\ Id\ (\ \textbf{:}\ Type\ [\
 Function \to \textbf{fn}\ Id\ \textbf{(}\ [ParamDecList]\ \textbf{)}\
 [\textbf{->}\ Type]\ \textbf{\{}\ Body\ \textbf{\}} \\
 
-\end{align*}
-$$
+\end{align*} \\
 
-$$
 \begin{align*}
 
 Type \to \textbf{i32} \mid \textbf{i64} \mid \textbf{u32} \mid \textbf{u64} \mid \textbf{bool} \\
@@ -31,10 +26,8 @@ Body \to ( VarDec\ \textbf{;} \mid Stm )^* \\
 ParamDecList \to Id\ \textbf{:}\ Type\
 (\textbf{,}\ Id\ \textbf{:}\ Type)^* \\
 
-\end{align*}
-$$
+\end{align*} \\
 
-$$
 \begin{align*}
 
 Stm \to \textbf{if}\ BExp\ \textbf{\{}\ Body\ \textbf{\}}\
@@ -54,10 +47,8 @@ Id\ \textbf{=}\ BExp\ \textbf{;} \mid \\
 
 BExp\ \textbf{;}\ \
 
-\end{align*}
-$$
+\end{align*} \\
 
-$$
 \begin{align*}
 
 BExp \to [\ \textbf{!}\ ]\ CExp \\
@@ -73,5 +64,6 @@ Id(\ [\  ArgList\ ] \ ) \\
 
 ArgList \to BExp (\ \textbf{,}\ BExp\ )^* \\
 
-\end{align*}
-$$
+\end{align*} \\
+
+```
