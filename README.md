@@ -1,6 +1,5 @@
 # PeRRy
 ## *P* ascal PCode Interpreter - *R* ust Compiler
-### Por: Alejandro Joel Ore Garcia
 
 Esta es una implementación de un compilador simple de un subset de Rust a una modificación propia de código de pila Pascal PCode; a la vez que un intérprete para este último. Todo esto fue escrito en C++.
 
